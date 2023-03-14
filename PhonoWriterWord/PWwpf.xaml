@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="PhonoWriterWord.PWwpf"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PhonoWriterWord"
+             mc:Ignorable="d" Height="636.549" Width="621.614">
+    <Grid>
+        <Label Content="mySelection" x:Name="mySelection" x:FieldModifier="public" HorizontalAlignment="Left" VerticalAlignment="Top" Height="638" Width="302" Background="#FFC88B8B" Margin="0,0,0,-188.4" FontSize="32"/>
+        
+    </Grid>
+</UserControl>

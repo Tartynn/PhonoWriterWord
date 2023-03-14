@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Word = Microsoft.Office.Interop.Word;
-using Office = Microsoft.Office.Core;
-using Microsoft.Office.Tools.Word;
+using System.Windows.Forms.Integration;
+using System.Windows.Forms;
 
 namespace PhonoWriterWord
 {
@@ -15,13 +12,30 @@ namespace PhonoWriterWord
         public PWUserControl usr;
         // Custom task pane
         private Microsoft.Office.Tools.CustomTaskPane myCustomTaskPane;
+        private ElementHost eh;
+        private PWwpf wpf;
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             usr = new PWUserControl();
+            wpf = new PWwpf();
+            eh = new ElementHost { Child = wpf };
+            usr.Controls.Add(eh);
+            eh.Dock = DockStyle.Fill;
             this.Application.DocumentBeforeSave += new Word.ApplicationEvents4_DocumentBeforeSaveEventHandler(Application_DocumentBeforeSave);
             System.Diagnostics.Debug.WriteLine("Hello World");
             myCustomTaskPane = this.CustomTaskPanes.Add(usr, "My Task Pane");
             myCustomTaskPane.Visible = true;
+            myCustomTaskPane.Width = 400;
+            Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
+        }
+
+        private void Application_WindowSelectionChange(Word.Selection sel)
+        {
+            
+            System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
+            label.Content = sel.Text;
+            System.Diagnostics.Debug.WriteLine(sel.Text);
+            
         }
 
         void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)

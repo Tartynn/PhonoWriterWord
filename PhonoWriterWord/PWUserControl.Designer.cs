@@ -37,7 +37,7 @@ namespace PhonoWriterWord
             // 
             this.Title.AutoSize = true;
             this.Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.Title.Location = new System.Drawing.Point(71, 36);
+            this.Title.Location = new System.Drawing.Point(72, 114);
             this.Title.Name = "Title";
             this.Title.Size = new System.Drawing.Size(153, 29);
             this.Title.TabIndex = 0;
@@ -45,7 +45,7 @@ namespace PhonoWriterWord
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(105, 136);
+            this.button2.Location = new System.Drawing.Point(99, 167);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
