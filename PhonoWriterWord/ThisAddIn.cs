@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Word = Microsoft.Office.Interop.Word;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Word;
 
 namespace PhonoWriterWord
 {
@@ -27,17 +28,23 @@ namespace PhonoWriterWord
             myCustomTaskPane.Visible = true;
             myCustomTaskPane.Width = 400;
             Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
+            
         }
 
         private void Application_WindowSelectionChange(Word.Selection sel)
         {
-            
+            Word.Document document = this.Application.ActiveDocument;
+            //select the range of the word when the cursor is on it
+            Range selectionRange = document.ActiveWindow.Selection.Range;
+            selectionRange.Expand(WdUnits.wdWord);
+            string word = selectionRange.Text.Trim();
+            //assigning the value to our label
             System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
-            label.Content = sel.Text;
-            System.Diagnostics.Debug.WriteLine(sel.Text);
-            
+            label.Content = word;
+
         }
 
+            
         void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
         {
             Doc.Paragraphs[1].Range.InsertParagraphBefore();
