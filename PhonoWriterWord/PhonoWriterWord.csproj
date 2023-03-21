@@ -231,6 +231,7 @@
     <EmbeddedResource Include="PWUserControl.resx">
       <DependentUpon>PWUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
@@ -271,7 +272,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Database\Files\Custom\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
