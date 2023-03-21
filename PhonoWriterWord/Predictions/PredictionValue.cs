@@ -2,6 +2,7 @@
 {
     public class PredictionValue
     {
+        public PredictionValue() { }
         public PredictionValue(string prediction, float value, PredictionType type)
         {
             Prediction = prediction;
@@ -10,12 +11,12 @@
         }
 
         public string Prediction
-        { get; }
+        { get; set; }
 
         public float Value
-        { get; }
+        { get; set; }
 
         public PredictionType Type
-        { get; }
+        { get; set; }
     }
 }

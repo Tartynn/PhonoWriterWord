@@ -204,9 +204,13 @@
     <Compile Include="Exceptions\DefinitionNotFoundException.cs" />
     <Compile Include="Exceptions\ImageNotFoundException.cs" />
     <Compile Include="Exceptions\LanguageNotFoundException.cs" />
+    <Compile Include="Exceptions\NoConnectionAvailableException.cs" />
     <Compile Include="Exceptions\WordNotFoundException.cs" />
     <Compile Include="Managers\LanguagesManager.cs" />
+    <Compile Include="Managers\PredictionsManager.cs" />
     <Compile Include="Predictions\Prediction.cs" />
+    <Compile Include="Predictions\PredictionAlternative.cs" />
+    <Compile Include="Predictions\PredictionClassic.cs" />
     <Compile Include="Predictions\PredictionRequest.cs" />
     <Compile Include="Predictions\PredictionsProvidersManager.cs" />
     <Compile Include="Predictions\PredictionType.cs" />
@@ -232,6 +236,7 @@
     <EmbeddedResource Include="PWUserControl.resx">
       <DependentUpon>PWUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
@@ -272,7 +277,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Database\Files\Custom\" />
+    <Folder Include="Predictions\Predictors\Remote\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

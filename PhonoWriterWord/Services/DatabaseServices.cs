@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using PhonoWriterWord.Services.Log;
+using PhonoWriterWord.Values;
 
 namespace PhonoWriterWord.Services
 {
@@ -76,13 +77,14 @@ namespace PhonoWriterWord.Services
 
             try
             {
-                connection = new SqliteConnection("Data Source=" + pathToDatabase + ";UseUTF8Encoding=True;Version=3");
+                connection = new SqliteConnection("Data Source=" + Constants.DATABASE_FILE);//pathToDatabase + ";UseUTF8Encoding=True;Version=3");
                 connection.Open();
             }
             catch (Exception e)
             {
                 connection = null;
-                _logService.Log(Log.LogModes.ERROR, "DatabaseService", e.Message);
+                System.Diagnostics.Debug.WriteLine("connection = null - From DatabaseServices.cs");
+                //_logService.Log(Log.LogModes.ERROR, "DatabaseService", e.Message);
             }
 
             return connection;

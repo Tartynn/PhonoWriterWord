@@ -1,7 +1,14 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using PhonoWriterWord.Exceptions;
+using PhonoWriterWord.Services.Log;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PhonoWriterWord.Services.UpdateService
@@ -262,7 +269,7 @@ namespace PhonoWriterWord.Services.UpdateService
                     string insertQuery = "INSERT INTO image(file_name, is_updated) VALUES(:fileName, 1);";
                     string selectQuery = "SELECT last_insert_rowid()";
 
-                    var paramFileName = new SqliteParameter("fileName");
+                    var paramFileName = new SqliteParameter("fileName", db);
 
                     var commandInsert = new SqliteCommand(insertQuery, db);
                     commandInsert.Parameters.Add(paramFileName);
@@ -317,7 +324,7 @@ namespace PhonoWriterWord.Services.UpdateService
                     string insertQuery = "INSERT INTO definition(text, is_updated) VALUES(:definition, 1);";
                     string selectQuery = "SELECT last_insert_rowid()";
 
-                    SqliteParameter paramDefinition = new SqliteParameter("definition");
+                    SqliteParameter paramDefinition = new SqliteParameter("definition", db);
 
                     var commandInsert = new SqliteCommand(insertQuery, db);
                     commandInsert.Parameters.Add(paramDefinition);
@@ -376,13 +383,13 @@ namespace PhonoWriterWord.Services.UpdateService
                     string selectQuery = "SELECT id FROM word WHERE text = :text and language_id = :languageId";
                     string updateQuery = "UPDATE word SET definition_id = :definitionId, image_id = :imageId, occurrence = :occurrence, fuzzy_hash = :fuzzy_hash, phonetic = :phonetic, is_updated = 1 WHERE text = :text and language_id = :languageId";
 
-                    SqliteParameter paramLanguageId = new SqliteParameter("languageId");
-                    SqliteParameter paramDefinitionId = new SqliteParameter("definitionId");
-                    SqliteParameter paramImageId = new SqliteParameter("imageId");
-                    SqliteParameter paramText = new SqliteParameter("text");
-                    SqliteParameter paramOccurrence = new SqliteParameter("occurrence");
-                    SqliteParameter paramFuzzyHash = new SqliteParameter("fuzzy_hash");
-                    SqliteParameter paramPhonetic = new SqliteParameter("phonetic");
+                    SqliteParameter paramLanguageId = new SqliteParameter("languageId", db);
+                    SqliteParameter paramDefinitionId = new SqliteParameter("definitionId", db);
+                    SqliteParameter paramImageId = new SqliteParameter("imageId", db);
+                    SqliteParameter paramText = new SqliteParameter("text", db);
+                    SqliteParameter paramOccurrence = new SqliteParameter("occurrence", db);
+                    SqliteParameter paramFuzzyHash = new SqliteParameter("fuzzy_hash", db);
+                    SqliteParameter paramPhonetic = new SqliteParameter("phonetic", db);
 
                     // Create INSERT to new database command.
                     var commandInsert = new SqliteCommand(insertQuery, db);
@@ -497,9 +504,9 @@ namespace PhonoWriterWord.Services.UpdateService
                     string updateQuery = "UPDATE pair SET occurrence = :occurrence, is_updated = 1 WHERE current_word_id = :currentWordId and next_word_id = :nextWordId";
 
                     var commandInsert = new SqliteCommand(insertQuery, db);
-                    SqliteParameter paramCurrentWordId = new SqliteParameter("currentWordId");
-                    SqliteParameter paramNextWordId = new SqliteParameter("nextWordId");
-                    SqliteParameter paramOccurrence = new SqliteParameter("occurrence");
+                    SqliteParameter paramCurrentWordId = new SqliteParameter("currentWordId", db);
+                    SqliteParameter paramNextWordId = new SqliteParameter("nextWordId", db);
+                    SqliteParameter paramOccurrence = new SqliteParameter("occurrence", db);
 
                     commandInsert.Parameters.Add(paramCurrentWordId);
                     commandInsert.Parameters.Add(paramNextWordId);
@@ -581,8 +588,8 @@ namespace PhonoWriterWord.Services.UpdateService
 
                         string insertQuery = "INSERT OR IGNORE INTO alternative(word_id, text) VALUES(:wordId, :text);";
 
-                        var paramWordId = new SqliteParameter("wordId");
-                        var paramText = new SqliteParameter("text");
+                        var paramWordId = new SqliteParameter("wordId", db);
+                        var paramText = new SqliteParameter("text", db);
 
                         var commandInsert = new SqliteCommand(insertQuery, db);
                         commandInsert.Parameters.Add(paramWordId);

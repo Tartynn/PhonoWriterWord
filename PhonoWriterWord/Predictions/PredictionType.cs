@@ -5,6 +5,7 @@
         CLASSIC,
         PHONETIC,
         FUZZY,
-        RELATIONSHIP
+        RELATIONSHIP,
+        ALTERNATIVE
     }
 }

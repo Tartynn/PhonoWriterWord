@@ -15,7 +15,7 @@ namespace PhonoWriterWord.Predictions
     public class PredictionsProvidersManager
     {
         //IConfiguration _configuration;
-        //LanguagesManager _languagesManager;
+        LanguagesManager _languagesManager;
         string _lastInput;
         Log _log;
         Dictionary<string, PredictionsProvider> _providers;
@@ -65,7 +65,7 @@ namespace PhonoWriterWord.Predictions
         /// <param name="input">Input</param>
         public List<string> Filter(List<string> predictions, string input)
         {
-            var language = LanguagesManager.CurrentLanguage;
+            var language = _languagesManager.CurrentLanguage; //LanguagesManager.CurrentLanguage;
             List<Word> words = language.Words;
 
             // Regroup by occurencies (high = > 1 occurences, low = 1 occurency).

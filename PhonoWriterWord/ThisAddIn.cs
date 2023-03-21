@@ -11,11 +11,9 @@ using PhonoWriterWord.Services.Log;
 using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
-using Icare.PhonoWriter.Client.Classes;
 using System.Windows.Threading;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using Task = System.Threading.Tasks.Task;
 using System.Windows;
 using PhonoWriterWord.Services.UpdateService;
@@ -41,9 +39,9 @@ namespace PhonoWriterWord
         // Managers
         // Managers
         public LanguagesManager LanguagesManager { get; private set; }
-        public EnginesManager EnginesManager { get; private set; }
+        //public EnginesManager EnginesManager { get; private set; }
         public PredictionsManager PredictionsManager { get; private set; }
-        public TextProvidersManager TextProvidersManager { get; private set; }
+        //public TextProvidersManager TextProvidersManager { get; private set; }
         public DatabaseController DatabaseController { get; private set; }
 
 
@@ -64,7 +62,7 @@ namespace PhonoWriterWord
         public static ThisAddIn Current { get; protected set; }
         public string Name => "PhonoWriter";
 
-        public DatabaseController DatabaseController { get; }
+        //public DatabaseController DatabaseController { get; }
 
         // Managers
         public LanguagesManager LanguagessManager { get; private set; }
@@ -100,7 +98,8 @@ namespace PhonoWriterWord
             Current = this;
 
             CheckDatabase();
-           
+            CheckFolders();
+            InitializeServices();
 
         }
 
@@ -115,7 +114,7 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine("File not existing: " + Constants.DATABASE_BASE_FILE);
 
                 //Display error message
-                MessageBox.Show("The required database file is missing. Please contact your system administrator.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //System.Windows.MessageBox.Show("The required database file is missing. Please contact your system administrator.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -145,6 +144,8 @@ namespace PhonoWriterWord
             if (!Directory.Exists(Constants.IMAGES_CUSTOM_PATH))
                 //Directory.CreateDirectory(Constants.IMAGES_CUSTOM_PATH);
                 System.Diagnostics.Debug.WriteLine("Error : Constants.IMAGES_CUSTOM_PATH");
+
+            System.Diagnostics.Debug.WriteLine("Folders checked");
         }
 
         private async Task InitializeServices()
@@ -152,43 +153,44 @@ namespace PhonoWriterWord
             await Task.Run(() =>
             {
                 // Load managers and services.
-                DatabaseService = new DatabaseService(Constants.DATABASE_USER_FILE, LogService);
+                DatabaseService = new DatabaseService("D:\\PhonoWriterWord_CSharp\\PhonoWriterWord\\Database\\Files\\dictionary.db", LogService); //Constants.DATABASE_FILE
                 DatabaseController = new DatabaseController(DatabaseService);
                 LanguagessManager = new LanguagesManager();
-                SpeechEnginesManager = new SpeechEnginesManager();
-                TextProvidersManager = new TextProvidersManager();
+                //SpeechEnginesManager = new SpeechEnginesManager();
+                //TextProvidersManager = new TextProvidersManager();
                 PredictionsProvidersManager = new PredictionsProvidersManager();
                 PredictionsService = new PredictionsService();
 
                 // Start managers and services.
-                InitializeSpyService();
+                //InitializeSpyService();
                 LanguagessManager.Initialize();
-                PredictionsProvidersManager.AddProvider("localhost", new LocalProvider(PredictionsService));
+                //PredictionsProvidersManager.AddProvider("localhost", new LocalProvider(PredictionsService));
             });
         }
 
-        private void InitilizeServices()
-        {
-            // Load managers and services.
-            DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
-            LanguagesManager = new LanguagesManager();
-            //EnginesManager = new EnginesManager();
-            TextProvidersManager = new TextProvidersManager();
-            PredictionsManager = new PredictionsManager();
-            DatabaseController = new DatabaseController(DatabaseService);
-            PredictionsService = new PredictionsService();
-            SpyService = new SpyService();
-            if (IsWindows11())
-                SpyService = new SpyServiceWin11();
+        //private void InitilizeServices()
+        //{
+        //    // Load managers and services.
+        //    DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
+        //    LanguagesManager = new LanguagesManager();
+        //    //EnginesManager = new EnginesManager();
+        //    //TextProvidersManager = new TextProvidersManager();
+        //    PredictionsManager = new PredictionsManager();
+        //    DatabaseController = new DatabaseController(DatabaseService);
+        //    PredictionsService = new PredictionsService();
+        //    //SpyService = new SpyService();
+        //    //if (IsWindows11())
+        //    //    SpyService = new SpyServiceWin11();
 
-            // Start managers and services.
-            LanguagesManager.Initialize();
-            PredictionsManager.Initialize();
-            TextProvidersManager.Initialize();
-        }
+        //    // Start managers and services.
+        //    LanguagesManager.Initialize();
+        //    PredictionsManager.Initialize();
+        //    //TextProvidersManager.Initialize();
+        //}
 
         protected void OnStartup(StartupEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("OnStartup Method");
             CheckFolders();
 
         }
