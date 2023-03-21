@@ -1,11 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
-using PhonoWriterWord.Database.Controllers;
+﻿using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Services;
+using PhonoWriterWord.Values;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace PhonoWriterWord.Database
 {
@@ -41,23 +38,23 @@ namespace PhonoWriterWord.Database
 
         }
 
-        public SqliteConnection CreateConnection() => _databaseService.CreateConnection();
-        public SqliteConnection GetConnection() => _databaseService.GetConnection();
+        public SQLiteConnection CreateConnection() => _databaseService.CreateConnection(Constants.DATABASE_FILE);
+        public SQLiteConnection GetConnection() => _databaseService.GetConnection();
 
-        public object DoCommand(Func<SqliteCommand, object> action)
+        public object DoCommand(Func<SQLiteCommand, object> action)
         {
             // TODO : Try to find why GetConnection() doesn't work here.
             using (var connection = CreateConnection())
             {
                 //using (var command = new SqliteCommand(connection)) // ANCIEN
-                using (var command = new SqliteCommand { Connection = connection }) //tentative de remplacement...
+                using (var command = new SQLiteCommand { Connection = connection }) //tentative de remplacement...
                 {
                     return action(command);
                 }
             }
         }
 
-        public object DoTransaction(Func<SqliteCommand, SqliteTransaction, object> action)
+        public object DoTransaction(Func<SQLiteCommand, SQLiteTransaction, object> action)
         {
             object results = null;
 
@@ -66,7 +63,7 @@ namespace PhonoWriterWord.Database
                 using (var transaction = connection.BeginTransaction())
                 {
                     //using (var command = new SqliteCommand(connection))
-                    using (var command = new SqliteCommand { Connection = connection })
+                    using (var command = new SQLiteCommand { Connection = connection })
                     {
                         results = action(command, transaction);
                     }
@@ -78,14 +75,14 @@ namespace PhonoWriterWord.Database
             return results;
         }
 
-        public void DoTransaction(Action<SqliteCommand, SqliteTransaction> action)
+        public void DoTransaction(Action<SQLiteCommand, SQLiteTransaction> action)
         {
             var connection = GetConnection();
             {
                 using (var transaction = connection.BeginTransaction())
                 {
                     //using (var command = new SqliteCommand(connection))
-                    using (var command = new SqliteCommand { Connection = connection })
+                    using (var command = new SQLiteCommand { Connection = connection })
                     {
                         action(command, transaction);
                     }
