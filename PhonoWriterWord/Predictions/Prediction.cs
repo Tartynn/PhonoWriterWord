@@ -1,7 +1,7 @@
-﻿using System;
+﻿
+using PhonoWriterWord.Predictions.Predictors;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PhonoWriterWord.Predictions
@@ -22,5 +22,7 @@ namespace PhonoWriterWord.Predictions
 		}
 
 		abstract public List<PredictionValue> Work(string input, ParallelOptions parallelOptions);
-	}
+
+       
+    }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.SQLite;
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Exceptions;
 using System;
@@ -28,7 +28,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramIso = new SqliteParameter("iso", language.Iso);
+                SQLiteParameter paramIso = new SQLiteParameter("iso", language.Iso);
 
                 //paramIso.Value = language.Iso;
 
@@ -43,7 +43,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((cmd, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", language.Id);
+                SQLiteParameter paramId = new SQLiteParameter("id", language.Id);
 
                 //paramId.Value = language.Id;
 
@@ -58,7 +58,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Language)DatabaseController.DoTransaction((cmd, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
                 cmd.CommandText = LanguagesController.researchQuery;
@@ -94,7 +94,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Language)DatabaseController.DoTransaction((cmd, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("iso", iso);
+                SQLiteParameter param = new SQLiteParameter("iso", iso);
 
                 //param.Value = iso;
                 cmd.CommandText = LanguagesController.researchByCodeQuery;
@@ -136,7 +136,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Language)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("wordId", word.Id);
+                SQLiteParameter param = new SQLiteParameter("wordId", word.Id);
 
                 //param.Value = word.Id;
                 command.CommandText = LanguagesController.researchByWordQuery;
@@ -203,8 +203,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((cmd, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", language.Iso);
-                SqliteParameter paramIso = new SqliteParameter("iso", language.Iso);
+                SQLiteParameter paramId = new SQLiteParameter("id", language.Iso);
+                SQLiteParameter paramIso = new SQLiteParameter("iso", language.Iso);
 
                 //paramId.Value = language.Id;
                 //paramIso.Value = language.Iso;

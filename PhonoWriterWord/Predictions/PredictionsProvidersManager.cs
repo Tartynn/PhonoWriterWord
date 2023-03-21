@@ -65,7 +65,8 @@ namespace PhonoWriterWord.Predictions
         /// <param name="input">Input</param>
         public List<string> Filter(List<string> predictions, string input)
         {
-            var language = LanguagesManager.CurrentLanguage;
+            //var language = LanguagesManager.CurrentLanguage;
+            var language = new Language(1, "fr");
             List<Word> words = language.Words;
 
             // Regroup by occurencies (high = > 1 occurences, low = 1 occurency).

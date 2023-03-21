@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Word = Microsoft.Office.Interop.Word;
-using System.Windows.Forms.Integration;
-using System.Windows.Forms;
 using Microsoft.Office.Interop.Word;
 using PhonoWriterWord.Database;
 using PhonoWriterWord.Managers;
@@ -12,18 +10,21 @@ using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
 using Icare.PhonoWriter.Client.Classes;
-using System.Windows.Threading;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using Task = System.Threading.Tasks.Task;
+using System.Windows;
+using System.Windows.Forms.Integration;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 
 namespace PhonoWriterWord
 
 
+
 {
     public partial class ThisAddIn
-    {
+    { 
+
         //user control
         public PWUserControl usr;
         // Custom task pane
@@ -56,10 +57,12 @@ namespace PhonoWriterWord
         public DatabaseController DatabaseController { get; }
 
         // Managers
-        public LanguagesManager LanguagessManager { get; private set; }
+        public LanguagesManager LanguagesManager { get; private set; }
         //public SpeechEnginesManager SpeechEnginesManager { get; private set; }
         public PredictionsProvidersManager PredictionsProvidersManager { get; private set; }
-        //public TextProvidersManager TextProvidersManager { get; private set; }
+        public TextProvidersManager TextProvidersManager { get; private set; }
+        public PredictionsManager PredictionsManager { get; private set; }
+
 
         // Services
         public LogService LogService { get; protected set; }
@@ -89,7 +92,29 @@ namespace PhonoWriterWord
             Current = this;
 
             CheckDatabase();
+            InitializeServices();
            
+
+        }
+
+        private void InitializeServices()
+        {
+            // Load managers and services.
+            DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
+            LanguagesManager = new LanguagesManager();
+            //EnginesManager = new EnginesManager();
+            TextProvidersManager = new TextProvidersManager();
+            PredictionsManager = new PredictionsManager();
+            //DatabaseController = new DatabaseController(DatabaseService);
+            //PredictionsService = new PredictionsService();
+            //SpyService = new SpyService();
+            //if (IsWindows11())
+            //    SpyService = new SpyServiceWin11();
+
+            // Start managers and services.
+            //LanguagesManager.Initialize();
+            PredictionsManager.Initialize();
+            TextProvidersManager.Initialize();
 
         }
 
@@ -104,7 +129,7 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine("File not existing: " + Constants.DATABASE_BASE_FILE);
 
                 //Display error message
-                MessageBox.Show("The required database file is missing. Please contact your system administrator.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The required database file is missing. Please contact your system administrator.", "Error", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Error);
                 return;
             }
 
@@ -170,7 +195,39 @@ namespace PhonoWriterWord
             this.Startup += new System.EventHandler(ThisAddIn_Startup);
             this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
         }
-        
+
         #endregion
+
+
+        private void TextProvidersManager_TextFound(object sender, TextFoundArgs e)
+        {
+            _log.Debug("TextProvidersManager_TextFound [text : '{0}', fetch : {1}]", e.Text, e.FetchType);
+
+            // Read found text.
+            //!!!!!!!!!!!!!!CHANGE CONDITION
+            if (true)
+            {
+                Task.Run(() =>
+                {
+                    // Assume we have to wait 500ms so the phonetic prediction
+                    // can run before we play the selected text.
+                    // TODO : Increase if users complains.
+                    Thread.Sleep(500);
+
+                    // Prevent playing the text too fast (can be annoying).
+                    if (_currentInput != e.Text)
+                        return;
+
+                    //EnginesManager.CurrentEngine.Speak(e.Text, LanguageUtils.ConvertLanguageToString(Configuration.Language, true), Configuration.VoiceVolume, Configuration.VoiceSpeed);
+                });
+            }
+
+            // Start a predictions request.
+            if (_currentInput != e.Text)
+                PredictionsManager.Request(e.Text);
+
+            // Store current input for futur usage.
+            _currentInput = e.Text;
+        }
     }
 }

@@ -1,12 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
-using PhonoWriterWord.Database.Models;
+﻿using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace PhonoWriterWord.Database.Controllers
 {
@@ -35,8 +32,8 @@ namespace PhonoWriterWord.Database.Controllers
 
             return (int)DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramFileName = new SqliteParameter("fileName", image.FileName);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(image.IsUpdated));
+                SQLiteParameter paramFileName = new SQLiteParameter("fileName", image.FileName);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(image.IsUpdated));
 
                 //paramFileName.Value = image.FileName;
                 //paramIsUpdated.Value = Convert.ToInt32(image.IsUpdated);
@@ -59,7 +56,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
 
@@ -79,7 +76,7 @@ namespace PhonoWriterWord.Database.Controllers
 
             return (Image)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
                 command.CommandText = ImagesController.researchQuery;
@@ -121,7 +118,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Image)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("wordId", word.Id);
+                SQLiteParameter param = new SQLiteParameter("wordId", word.Id);
 
                 //param.Value = word.Id;
                 command.CommandText = ImagesController.researchByWordQuery;
@@ -191,8 +188,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Image>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramSectionImage = new SqliteParameter("endNumberImage", sectionImage);
-                SqliteParameter paramtextSearch = new SqliteParameter("fileName", "%" + textSearch + "%");
+                SQLiteParameter paramSectionImage = new SQLiteParameter("endNumberImage", sectionImage);
+                SQLiteParameter paramtextSearch = new SQLiteParameter("fileName", "%" + textSearch + "%");
 
                 //paramSectionImage.Value = sectionImage;
                 //paramtextSearch.Value = "%" + textSearch + "%";

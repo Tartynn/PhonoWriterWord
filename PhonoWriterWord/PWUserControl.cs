@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PhonoWriterWord.Database;
+using PhonoWriterWord.Database.Controllers;
+using PhonoWriterWord.Predictions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;

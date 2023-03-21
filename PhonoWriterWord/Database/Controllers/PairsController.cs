@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.SQLite;
 using PhonoWriterWord.Database.Models;
 using System;
 using System.Collections.Generic;
@@ -29,12 +29,12 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramCurrentWord = new SqliteParameter("currentWord", pair.CurrentWord);
-                SqliteParameter paramNextWord = new SqliteParameter("nextWord", pair.NextWord);
-                SqliteParameter paramOccurrence = new SqliteParameter("occurrence", pair.Occurrence);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(pair.IsUpdated));
+                SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", pair.CurrentWord);
+                SQLiteParameter paramNextWord = new SQLiteParameter("nextWord", pair.NextWord);
+                SQLiteParameter paramOccurrence = new SQLiteParameter("occurrence", pair.Occurrence);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(pair.IsUpdated));
 
-                //Commented since the second argument was added to SqliteParameter's arguments
+                //Commented since the second argument was added to SQLiteParameter's arguments
                 //paramCurrentWord.Value = pair.CurrentWord;
                 //paramNextWord.Value = pair.NextWord;
                 //paramOccurrence.Value = pair.Occurrence;
@@ -54,7 +54,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Pair>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramCurrentWord = new SqliteParameter("currentWord", word.Id);
+                SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", word.Id);
 
                 //paramCurrentWord.Value = word.Id;
 
@@ -92,7 +92,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Pair>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramNextWord = new SqliteParameter("nextWord", word.Id);
+                SQLiteParameter paramNextWord = new SQLiteParameter("nextWord", word.Id);
 
                 //paramNextWord.Value = word.Id;
 
@@ -130,7 +130,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Pair>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramWord = new SqliteParameter("word", word.Id);
+                SQLiteParameter paramWord = new SQLiteParameter("word", word.Id);
 
                 //paramWord.Value = word.Id;
 
@@ -168,8 +168,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Pair)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramCurrentWord = new SqliteParameter("currentWord", currentWord.Id);
-                SqliteParameter paramNextWord = new SqliteParameter("nextWord", nextWord.Id);
+                SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", currentWord.Id);
+                SQLiteParameter paramNextWord = new SQLiteParameter("nextWord", nextWord.Id);
 
                 //paramCurrentWord.Value = currentWord.Id;
                 //paramNextWord.Value = nextWord.Id;
@@ -207,8 +207,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Pair>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramCurrentWord = new SqliteParameter("currentWord", word.Id);
-                SqliteParameter paramNbWords = new SqliteParameter("nbWords", nbWords);
+                SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", word.Id);
+                SQLiteParameter paramNbWords = new SQLiteParameter("nbWords", nbWords);
 
                 //paramCurrentWord.Value = word.Id;
                 //paramNbWords.Value = nbWords;
@@ -248,11 +248,11 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", pair.Id);
-                SqliteParameter paramCurrentWord = new SqliteParameter("currentWord", pair.CurrentWord);
-                SqliteParameter paramNextWord = new SqliteParameter("nextWord", pair.NextWord);
-                SqliteParameter paramOccurrence = new SqliteParameter("occurrence", pair.Occurrence);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(pair.IsUpdated));
+                SQLiteParameter paramId = new SQLiteParameter("id", pair.Id);
+                SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", pair.CurrentWord);
+                SQLiteParameter paramNextWord = new SQLiteParameter("nextWord", pair.NextWord);
+                SQLiteParameter paramOccurrence = new SQLiteParameter("occurrence", pair.Occurrence);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(pair.IsUpdated));
 
                 //paramId.Value = pair.Id;
                 //paramCurrentWord.Value = pair.CurrentWord;
@@ -275,7 +275,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", pair.Id);
+                SQLiteParameter paramId = new SQLiteParameter("id", pair.Id);
 
                 //paramId.Value = pair.Id;
 

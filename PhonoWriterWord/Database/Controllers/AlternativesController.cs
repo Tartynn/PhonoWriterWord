@@ -1,12 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
-using PhonoWriterWord.Database.Models;
+﻿using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace PhonoWriterWord.Database.Controllers
 {
@@ -29,8 +26,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (int)DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramWord = new SqliteParameter("wordId", alternative.Word); //add "alternative.Word because SqliteParameter needs 2 arguments : column name + value (object)
-                SqliteParameter paramText = new SqliteParameter("text", alternative.Text); //add "alternative.Word because SqliteParameter needs 2 arguments : column name + value (object)
+                SQLiteParameter paramWord = new SQLiteParameter("wordId", alternative.Word); //add "alternative.Word because SQLiteParameter needs 2 arguments : column name + value (object)
+                SQLiteParameter paramText = new SQLiteParameter("text", alternative.Text); //add "alternative.Word because SQLiteParameter needs 2 arguments : column name + value (object)
 
                 //paramWord.Value = alternative.Word;
                 //paramText.Value = alternative.Text;
@@ -41,7 +38,7 @@ namespace PhonoWriterWord.Database.Controllers
 
                 string query = command.CommandText;
 
-                foreach (SqliteParameter p in command.Parameters)
+                foreach (SQLiteParameter p in command.Parameters)
                     query = query.Replace(p.ParameterName, p.Value.ToString());
 
                 //Execute query
@@ -59,7 +56,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", alternative.Id); //add "alternative.Word because SqliteParameter needs 2 arguments : column name + value (object)
+                SQLiteParameter param = new SQLiteParameter("id", alternative.Id); //add "alternative.Word because SQLiteParameter needs 2 arguments : column name + value (object)
 
                 //param.Value = alternative.Id;
 
@@ -89,7 +86,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Word)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
                 command.CommandText = researchQuery;
@@ -123,7 +120,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Alternative>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
 
                 //paramLanguage.Value = language.Id;
                 command.CommandText = researchAllAlternativesQuery;
@@ -155,8 +152,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", beginning + "%");
-                SqliteParameter paramMinCaracteres = new SqliteParameter("minCaracteres", minCharacters);
+                SQLiteParameter paramText = new SQLiteParameter("text", beginning + "%");
+                SQLiteParameter paramMinCaracteres = new SQLiteParameter("minCaracteres", minCharacters);
 
                 //paramText.Value = beginning + "%";
                 //paramMinCaracteres.Value = minCharacters;
@@ -191,9 +188,9 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", beginning + "%"); // Character "%" is to search all the words which begin by "beginning"
-                SqliteParameter paramLimit = new SqliteParameter("limite", nbWords);
-                SqliteParameter paramMinCaracteres = new SqliteParameter("minCaracteres", minCharacters);
+                SQLiteParameter paramText = new SQLiteParameter("text", beginning + "%"); // Character "%" is to search all the words which begin by "beginning"
+                SQLiteParameter paramLimit = new SQLiteParameter("limite", nbWords);
+                SQLiteParameter paramMinCaracteres = new SQLiteParameter("minCaracteres", minCharacters);
 
                 //paramText.Value = beginning + "%"; // Character "%" is to search all the words which begin by "beginning"
                 //paramLimit.Value = nbWords;
@@ -229,7 +226,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Alternative)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", text);
+                SQLiteParameter paramText = new SQLiteParameter("text", text);
 
                 //paramText.Value = text;
 
@@ -261,9 +258,9 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", alternative.Id);
-                SqliteParameter paramWord = new SqliteParameter("wordId", DBNull.Value);
-                SqliteParameter paramText = new SqliteParameter("text", alternative.Text);
+                SQLiteParameter paramId = new SQLiteParameter("id", alternative.Id);
+                SQLiteParameter paramWord = new SQLiteParameter("wordId", DBNull.Value);
+                SQLiteParameter paramText = new SQLiteParameter("text", alternative.Text);
 
                 //paramId.Value = alternative.Id;
                 //paramWord.Value = DBNull.Value;
