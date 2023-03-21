@@ -11,6 +11,8 @@ using PhonoWriterWord.Services.Log;
 using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
+using System.Windows;
+using PhonoWriterWord.Services.UpdateService;
 
 namespace PhonoWriterWord
 {
@@ -27,6 +29,15 @@ namespace PhonoWriterWord
 
         // Instances
         private Log _log;
+
+        // Managers
+        // Managers
+        public LanguagesManager LanguagesManager { get; private set; }
+        public EnginesManager EnginesManager { get; private set; }
+        public PredictionsManager PredictionsManager { get; private set; }
+        public TextProvidersManager TextProvidersManager { get; private set; }
+        public DatabaseController DatabaseController { get; private set; }
+
 
         // Variables
         private bool _predictionIsSelected;     // Flag to know if a prediction has been selected in the predictions window.
@@ -58,7 +69,7 @@ namespace PhonoWriterWord
         public DatabaseService DatabaseService { get; set; }
         public PredictionsService PredictionsService { get; protected set; }
         //public SpyService SpyService { get; protected set; }
-        //public DesktopUpdateService UpdateService { get; protected set; }
+        public DesktopUpdateService UpdateService { get; protected set; }
 
         #endregion
 
@@ -80,6 +91,9 @@ namespace PhonoWriterWord
             _predictions = new List<string>();
             Current = this;
 
+            //Run
+
+
         }
 
         //====================================================================
@@ -98,6 +112,52 @@ namespace PhonoWriterWord
             if (!Directory.Exists(Constants.IMAGES_CUSTOM_PATH))
                 //Directory.CreateDirectory(Constants.IMAGES_CUSTOM_PATH);
                 System.Diagnostics.Debug.WriteLine("Error : Constants.IMAGES_CUSTOM_PATH");
+        }
+
+        private async Task InitializeServices()
+        {
+            await Task.Run(() =>
+            {
+                // Load managers and services.
+                DatabaseService = new DatabaseService(Constants.DATABASE_USER_FILE, LogService);
+                DatabaseController = new DatabaseController(DatabaseService);
+                LanguagessManager = new LanguagesManager();
+                SpeechEnginesManager = new SpeechEnginesManager();
+                TextProvidersManager = new TextProvidersManager();
+                PredictionsProvidersManager = new PredictionsProvidersManager();
+                PredictionsService = new PredictionsService();
+
+                // Start managers and services.
+                InitializeSpyService();
+                LanguagessManager.Initialize();
+                PredictionsProvidersManager.AddProvider("localhost", new LocalProvider(PredictionsService));
+            });
+        }
+
+        private void InitilizeServices()
+        {
+            // Load managers and services.
+            DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
+            LanguagesManager = new LanguagesManager();
+            //EnginesManager = new EnginesManager();
+            TextProvidersManager = new TextProvidersManager();
+            PredictionsManager = new PredictionsManager();
+            DatabaseController = new DatabaseController(DatabaseService);
+            PredictionsService = new PredictionsService();
+            SpyService = new SpyService();
+            if (IsWindows11())
+                SpyService = new SpyServiceWin11();
+
+            // Start managers and services.
+            LanguagesManager.Initialize();
+            PredictionsManager.Initialize();
+            TextProvidersManager.Initialize();
+        }
+
+        protected void OnStartup(StartupEventArgs e)
+        {
+            CheckFolders();
+
         }
 
         //====================================================================
