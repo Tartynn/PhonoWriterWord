@@ -194,6 +194,8 @@ namespace PhonoWriterWord
 
         private void Application_WindowSelectionChange(Word.Selection sel)
         {
+            System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
+            lw.Items.Clear();
             Word.Document document = this.Application.ActiveDocument;
             //select the range of the word when the cursor is on it
             Range selectionRange = document.ActiveWindow.Selection.Range;
@@ -210,7 +212,7 @@ namespace PhonoWriterWord
 
             foreach (var w in words)
             {
-                System.Diagnostics.Debug.WriteLine(w.Prediction);
+                lw.Items.Add(w.Prediction);
             }
         }
 
