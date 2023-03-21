@@ -26,13 +26,14 @@ namespace PhonoWriterWord.Predictions
 
 			var numberOfPrediction = 1;//_app.Configuration.ClassicPredictionsNumber;
 
-			var alternatives = _app.LanguagesManager.CurrentLanguage.Alternatives.Where(a => a.Text.Equals(input, System.StringComparison.InvariantCultureIgnoreCase)).Take(numberOfPrediction).ToList();
+			var fr = new Database.Models.Language(1, "fr");
+			var alternatives = /*_app.LanguagesManager.CurrentLanguage*/fr.Alternatives.Where(a => a.Text.Equals(input, System.StringComparison.InvariantCultureIgnoreCase)).Take(numberOfPrediction).ToList();
 			if (input.Length >= 4)
 			{
-				alternatives.AddRange(_app.LanguagesManager.CurrentLanguage.Alternatives.Where(a => a.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).Take(numberOfPrediction).ToList());
+				alternatives.AddRange(/*_app.LanguagesManager.CurrentLanguage*/fr.Alternatives.Where(a => a.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).Take(numberOfPrediction).ToList());
 			}
 			var alternateWordsIds = alternatives.Select(a => a.Word).ToArray();
-			var alternateWords = _app.LanguagesManager.CurrentLanguage.Words.Where(w => alternateWordsIds.Contains(w.Id));
+			var alternateWords = /*_app.LanguagesManager.CurrentLanguage*/fr.Words.Where(w => alternateWordsIds.Contains(w.Id));
 
 			foreach (Word word in alternateWords)
 			{

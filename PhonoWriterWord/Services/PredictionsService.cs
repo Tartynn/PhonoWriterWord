@@ -39,7 +39,7 @@ namespace PhonoWriterWord.Services
 			if (_request != null)
 				_request.Cancel();
 
-			//_log.Debug("Request [input : '{0}']", input);
+			System.Diagnostics.Debug.WriteLine("Request [input : '{0}']", input);
 
 			_request = new PredictionsRequest(predictions, input.Trim());
 

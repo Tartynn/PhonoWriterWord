@@ -46,7 +46,7 @@ namespace PhonoWriterWord.Database
             // TODO : Try to find why GetConnection() doesn't work here.
             using (var connection = CreateConnection())
             {
-                //using (var command = new SqliteCommand(connection)) // ANCIEN
+                //using (var command = new SQLiteCommand(connection)) // ANCIEN
                 using (var command = new SQLiteCommand { Connection = connection }) //tentative de remplacement...
                 {
                     return action(command);
@@ -62,7 +62,7 @@ namespace PhonoWriterWord.Database
             {
                 using (var transaction = connection.BeginTransaction())
                 {
-                    //using (var command = new SqliteCommand(connection))
+                    //using (var command = new SQLiteCommand(connection))
                     using (var command = new SQLiteCommand { Connection = connection })
                     {
                         results = action(command, transaction);
@@ -81,7 +81,7 @@ namespace PhonoWriterWord.Database
             {
                 using (var transaction = connection.BeginTransaction())
                 {
-                    //using (var command = new SqliteCommand(connection))
+                    //using (var command = new SQLiteCommand(connection))
                     using (var command = new SQLiteCommand { Connection = connection })
                     {
                         action(command, transaction);

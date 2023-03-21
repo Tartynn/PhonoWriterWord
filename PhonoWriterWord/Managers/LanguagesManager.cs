@@ -86,6 +86,8 @@ namespace PhonoWriterWord.Managers
         public void Initialize()
         {
             // Check if dictionaries exist, otherwise, shutdown and ask for reinstall.
+            System.Diagnostics.Debug.WriteLine("_app : " + _app.Name);
+            System.Diagnostics.Debug.WriteLine("_app : " + _app.DatabaseController);
             _languages = _app.DatabaseController.LanguagesController.ResearchAllLanguages();
             if (_languages == null)
             {

@@ -27,8 +27,9 @@ namespace PhonoWriterWord.Predictions
 			if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
-			var numberOfPrediction = 1;//_app.Configuration.ClassicPredictionsNumber;
-			var words = _app.LanguagesManager.CurrentLanguage.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
+			var numberOfPrediction = 9;//_app.Configuration.ClassicPredictionsNumber;
+			var fr = new Database.Models.Language(1, "fr");
+			var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
 
 			foreach (Word word in words)
 			{

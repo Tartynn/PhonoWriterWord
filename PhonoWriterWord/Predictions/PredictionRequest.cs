@@ -51,7 +51,7 @@ namespace PhonoWriterWord.Predictions
 		public PredictionsRequest(List<Prediction> predictions, string input)
 		{
 			_app = (ThisAddIn)ThisAddIn.Current;
-			_log = new Log(_app.LogService, GetType().Name);
+			//_log = new Log(_app.LogService, GetType().Name);
 			_predictions = predictions;
 			_input = input;
 		}
@@ -79,7 +79,7 @@ namespace PhonoWriterWord.Predictions
 			{
 				Parallel.ForEach(_predictions, _parallelOptions, (prediction) =>
 				{
-					_log.Debug("Starting {0} prediction for '{1}'", prediction.Name, _input);
+					System.Diagnostics.Debug.WriteLine("Starting {0} prediction for '{1}'", prediction.Name, _input);
 
 					if (_parallelOptions.CancellationToken.IsCancellationRequested)
 						return;
@@ -89,14 +89,14 @@ namespace PhonoWriterWord.Predictions
 					if (_parallelOptions.CancellationToken.IsCancellationRequested)
 						return;
 
-					_log.Debug("Ended {0} prediction", prediction.Name);
+					System.Diagnostics.Debug.WriteLine("Ended {0} prediction", prediction.Name);
 
 					predictionResults.ForEach(x => results.Add(x));
 				});
 			}
 			catch // (OperationCanceledException e)
 			{
-				_log.Debug("Cancelled prediction for '{0}'", _input);
+				System.Diagnostics.Debug.WriteLine("Cancelled prediction for {0}", _input);
 
 				// Clear the results.
 				PredictionValue result;

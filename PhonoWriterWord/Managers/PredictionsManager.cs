@@ -216,6 +216,7 @@ namespace PhonoWriterWord.Managers
 
         public void Request(string input)
         {
+            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with input");
             Request(_predictions, input);
         }
 
@@ -223,11 +224,14 @@ namespace PhonoWriterWord.Managers
         {
             if (input == null || string.IsNullOrWhiteSpace(input))
             {
+
                 _lastInput = string.Empty;
 
                 PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, new List<PredictionValue>()));
                 return;
             }
+
+            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with List predi + input");
 
             _lastInput = input;
 
@@ -242,8 +246,10 @@ namespace PhonoWriterWord.Managers
                 if (input != _lastInput) return; // Exit task if a new one has been called.
 
                 List<PredictionValue> results = _app.PredictionsService.Request(predictions, input);
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request sent with predictions + input");
 
                 PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, results));
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - END of request");
             });
         }
 
