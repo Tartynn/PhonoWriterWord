@@ -21,7 +21,7 @@ namespace PhonoWriterWord.Predictions
 			_app = (ThisAddIn)ThisAddIn.Current;
 		}
 
-		abstract public List<PredictionValue> Work(string input, ParallelOptions parallelOptions);
+		abstract public List<PredictionValue> Work(string input/*, ParallelOptions parallelOptions*/);
 
        
     }

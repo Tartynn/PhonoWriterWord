@@ -17,6 +17,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using Application = Microsoft.Office.Interop.Word.Application;
+using PhonoWriterWord.Predictions.Predictors;
 
 namespace PhonoWriterWord
 
@@ -55,7 +56,7 @@ namespace PhonoWriterWord
         public static ThisAddIn Current { get; protected set; }
         public string Name => "PhonoWriter";
 
-        public DatabaseController DatabaseController { get; }
+        public DatabaseController DatabaseController { get; set; }
 
         // Managers
         public LanguagesManager LanguagesManager { get; private set; }
@@ -72,6 +73,8 @@ namespace PhonoWriterWord
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
 
+
+        public Prediction pc = new PredictionClassic();
         #endregion
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
@@ -106,7 +109,7 @@ namespace PhonoWriterWord
             //EnginesManager = new EnginesManager();
             TextProvidersManager = new TextProvidersManager();
             PredictionsManager = new PredictionsManager();
-            //DatabaseController = new DatabaseController(DatabaseService);
+            DatabaseController = new DatabaseController(DatabaseService);
             //PredictionsService = new PredictionsService();
             //SpyService = new SpyService();
             //if (IsWindows11())
@@ -174,6 +177,12 @@ namespace PhonoWriterWord
             //assigning the value to our label
             System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
             label.Content = word;
+            var fr = new Database.Models.Language(1, "fr");
+            var words = pc.Work(word);
+            foreach (var w in words)
+            {
+                System.Diagnostics.Debug.WriteLine(w.Prediction);
+            }
         }
 
         void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)

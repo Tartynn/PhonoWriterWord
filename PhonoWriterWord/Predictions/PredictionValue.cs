@@ -10,12 +10,12 @@
         }
 
         public string Prediction
-        { get; }
+        { get; set; }
 
         public float Value
-        { get; }
+        { get; set; }
 
         public PredictionType Type
-        { get; }
+        { get; set; }
     }
 }
