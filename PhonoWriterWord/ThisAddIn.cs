@@ -11,8 +11,16 @@ using PhonoWriterWord.Services.Log;
 using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
+using Icare.PhonoWriter.Client.Classes;
+using System.Windows.Threading;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using Task = System.Threading.Tasks.Task;
 
 namespace PhonoWriterWord
+
+
 {
     public partial class ThisAddIn
     {
@@ -80,6 +88,34 @@ namespace PhonoWriterWord
             _predictions = new List<string>();
             Current = this;
 
+            CheckDatabase();
+           
+
+        }
+
+        private void CheckDatabase()
+        {
+            System.Diagnostics.Debug.WriteLine("Checking DB");
+
+            // If shared database doesn't exist...
+            if (!File.Exists(Constants.DATABASE_BASE_FILE))
+            {
+                //Write error message
+                System.Diagnostics.Debug.WriteLine("File not existing: " + Constants.DATABASE_BASE_FILE);
+
+                //Display error message
+                MessageBox.Show("The required database file is missing. Please contact your system administrator.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // If database doesn't exist, copy the original.
+            if (!File.Exists(Constants.DATABASE_FILE))
+            {
+                File.Copy(Constants.DATABASE_BASE_FILE, Constants.DATABASE_FILE);
+                System.Diagnostics.Debug.WriteLine("File copied");
+
+                return;
+            }
         }
 
         //====================================================================
