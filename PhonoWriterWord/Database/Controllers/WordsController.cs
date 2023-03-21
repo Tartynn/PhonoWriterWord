@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.SQLite;
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Exceptions;
 using System;
@@ -36,14 +36,14 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (int)DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", word.Language);
-                SqliteParameter paramDefinition = new SqliteParameter("definitionId", DBNull.Value);
-                SqliteParameter paramImage = new SqliteParameter("imageId", DBNull.Value);
-                SqliteParameter paramText = new SqliteParameter("text", word.Text);
-                SqliteParameter paramOccurrence = new SqliteParameter("occurrence", word.Occurrence);
-                SqliteParameter paramFuzzyHash = new SqliteParameter("fuzzyHash", word.FuzzyHash);
-                SqliteParameter paramPhonetic = new SqliteParameter("phonetic", word.Phonetic);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(word.IsUpdated));
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", word.Language);
+                SQLiteParameter paramDefinition = new SQLiteParameter("definitionId", DBNull.Value);
+                SQLiteParameter paramImage = new SQLiteParameter("imageId", DBNull.Value);
+                SQLiteParameter paramText = new SQLiteParameter("text", word.Text);
+                SQLiteParameter paramOccurrence = new SQLiteParameter("occurrence", word.Occurrence);
+                SQLiteParameter paramFuzzyHash = new SQLiteParameter("fuzzyHash", word.FuzzyHash);
+                SQLiteParameter paramPhonetic = new SQLiteParameter("phonetic", word.Phonetic);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(word.IsUpdated));
 
                 //paramLanguage.Value = word.Language;
                 //paramDefinition.Value = DBNull.Value;
@@ -69,7 +69,7 @@ namespace PhonoWriterWord.Database.Controllers
 
                 string query = command.CommandText;
 
-                foreach (SqliteParameter p in command.Parameters)
+                foreach (SQLiteParameter p in command.Parameters)
                     query = query.Replace(p.ParameterName, p.Value.ToString());
 
                 //Execute query
@@ -87,7 +87,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", word.Id);
+                SQLiteParameter param = new SQLiteParameter("id", word.Id);
 
                 //param.Value = word.Id;
 
@@ -132,7 +132,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Word)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
                 command.CommandText = researchQuery;
@@ -166,7 +166,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
 
                 //paramLanguage.Value = language.Id;
                 command.CommandText = researchAllWordsQuery;
@@ -198,9 +198,9 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", beginning + "%");
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
-                SqliteParameter paramMinCaracteres = new SqliteParameter("minCaracteres", minCharacters);
+                SQLiteParameter paramText = new SQLiteParameter("text", beginning + "%");
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
+                SQLiteParameter paramMinCaracteres = new SQLiteParameter("minCaracteres", minCharacters);
 
                 //paramText.Value = beginning + "%";
                 //paramLanguage.Value = language.Id;
@@ -237,10 +237,10 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", beginning + "%"); // Character "%" is to search all the words which begin by "beginning"
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
-                SqliteParameter paramLimit = new SqliteParameter("limite", nbWords);
-                SqliteParameter paramMinCaracteres = new SqliteParameter("minCaracteres", minCharacters);
+                SQLiteParameter paramText = new SQLiteParameter("text", beginning + "%"); // Character "%" is to search all the words which begin by "beginning"
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
+                SQLiteParameter paramLimit = new SQLiteParameter("limite", nbWords);
+                SQLiteParameter paramMinCaracteres = new SQLiteParameter("minCaracteres", minCharacters);
 
                 //paramText.Value = beginning + "%"; // Character "%" is to search all the words which begin by "beginning"
                 //paramLanguage.Value = language.Id;
@@ -277,7 +277,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramDefinition = new SqliteParameter("definitionId", definition.Id);
+                SQLiteParameter paramDefinition = new SQLiteParameter("definitionId", definition.Id);
 
                 //paramDefinition.Value = definition.Id;
                 command.CommandText = researchByDefinitionQuery;
@@ -307,7 +307,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
 
                 //paramLanguage.Value = language.Id;
 
@@ -338,7 +338,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramImage = new SqliteParameter("imageId", image.Id);
+                SQLiteParameter paramImage = new SQLiteParameter("imageId", image.Id);
 
                 //paramImage.Value = image.Id;
                 command.CommandText = researchByImageQuery;
@@ -368,7 +368,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (List<Word>)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramHash = new SqliteParameter("fuzzyHash", hash);
+                SQLiteParameter paramHash = new SQLiteParameter("fuzzyHash", hash);
 
                 //paramHash.Value = hash;
                 command.CommandText = researchByHashQuery;
@@ -400,7 +400,7 @@ namespace PhonoWriterWord.Database.Controllers
 
             return (Word)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramPair = new SqliteParameter("pairId", pair.Id);
+                SQLiteParameter paramPair = new SQLiteParameter("pairId", pair.Id);
 
                 //paramPair.Value = pair.Id;
                 command.CommandText = researchByPairFWQuery;
@@ -427,7 +427,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Word)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramPair = new SqliteParameter("pairId", pair.Id);
+                SQLiteParameter paramPair = new SQLiteParameter("pairId", pair.Id);
 
                 //paramPair.Value = pair.Id;
                 command.CommandText = researchByPairLWQuery;
@@ -456,8 +456,8 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Word)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", text);
-                SqliteParameter paramLanguage = new SqliteParameter("languageId", language.Id);
+                SQLiteParameter paramText = new SQLiteParameter("text", text);
+                SQLiteParameter paramLanguage = new SQLiteParameter("languageId", language.Id);
 
                 //paramText.Value = text;
                 //paramLanguage.Value = language.Id;
@@ -489,14 +489,14 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", word.Id);
-                SqliteParameter paramDefinition = new SqliteParameter("definitionId", DBNull.Value);
-                SqliteParameter paramImage = new SqliteParameter("imageId", DBNull.Value);
-                SqliteParameter paramText = new SqliteParameter("text", word.Text);
-                SqliteParameter paramOccurrence = new SqliteParameter("occurrence", word.Occurrence);
-                SqliteParameter paramFuzzyHash = new SqliteParameter("fuzzyHash", word.FuzzyHash);
-                SqliteParameter paramPhonetic = new SqliteParameter("phonetic", word.Phonetic);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(word.IsUpdated));
+                SQLiteParameter paramId = new SQLiteParameter("id", word.Id);
+                SQLiteParameter paramDefinition = new SQLiteParameter("definitionId", DBNull.Value);
+                SQLiteParameter paramImage = new SQLiteParameter("imageId", DBNull.Value);
+                SQLiteParameter paramText = new SQLiteParameter("text", word.Text);
+                SQLiteParameter paramOccurrence = new SQLiteParameter("occurrence", word.Occurrence);
+                SQLiteParameter paramFuzzyHash = new SQLiteParameter("fuzzyHash", word.FuzzyHash);
+                SQLiteParameter paramPhonetic = new SQLiteParameter("phonetic", word.Phonetic);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(word.IsUpdated));
 
                 //paramId.Value = word.Id;
                 //paramDefinition.Value = DBNull.Value;

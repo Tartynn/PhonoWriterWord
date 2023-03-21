@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.SQLite;
 using PhonoWriterWord.Database.Models;
 using SQLite.Persistance.DAO.SQLite;
 using System;
@@ -37,8 +37,8 @@ namespace PhonoWriterWord.Database.Controllers
 
             return (int)DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", text);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", isUpdated);
+                SQLiteParameter paramText = new SQLiteParameter("text", text);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", isUpdated);
 
                 //paramText.Value = text;
                 //paramIsUpdated.Value = isUpdated;
@@ -66,7 +66,7 @@ namespace PhonoWriterWord.Database.Controllers
 
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
 
@@ -82,7 +82,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Definition)DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter param = new SqliteParameter("id", id);
+                SQLiteParameter param = new SQLiteParameter("id", id);
 
                 //param.Value = id;
                 command.CommandText = researchQuery;
@@ -122,7 +122,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Definition)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter paramText = new SqliteParameter("text", text);
+                SQLiteParameter paramText = new SQLiteParameter("text", text);
 
                 //paramText.Value = text;
                 command.CommandText = DefinitionsController.researchByDefinitionQuery;
@@ -163,7 +163,7 @@ namespace PhonoWriterWord.Database.Controllers
         {
             return (Definition)DatabaseController.DoCommand((command) =>
             {
-                SqliteParameter param = new SqliteParameter("wordId", word.Id);
+                SQLiteParameter param = new SQLiteParameter("wordId", word.Id);
 
                 //param.Value = word.Id;
                 command.CommandText = DefinitionsController.researchByWordQuery;
@@ -206,7 +206,7 @@ namespace PhonoWriterWord.Database.Controllers
             {
                 Definition definition = null;
 
-                SqliteParameter paramDefinition = new SqliteParameter("id", definition.Id);
+                SQLiteParameter paramDefinition = new SQLiteParameter("id", definition.Id);
 
                 //paramDefinition.Value = definition.Id;
                 cmd.CommandText = DefinitionsController.researchAllDefinitionQuery;
@@ -242,9 +242,9 @@ namespace PhonoWriterWord.Database.Controllers
         {
             DatabaseController.DoTransaction((command, transaction) =>
             {
-                SqliteParameter paramId = new SqliteParameter("id", definition.Id);
-                SqliteParameter paramText = new SqliteParameter("text", definition.Text);
-                SqliteParameter paramIsUpdated = new SqliteParameter("isUpdated", Convert.ToInt32(definition.IsUpdated));
+                SQLiteParameter paramId = new SQLiteParameter("id", definition.Id);
+                SQLiteParameter paramText = new SQLiteParameter("text", definition.Text);
+                SQLiteParameter paramIsUpdated = new SQLiteParameter("isUpdated", Convert.ToInt32(definition.IsUpdated));
 
                 //paramId.Value = definition.Id;
                 //paramText.Value = definition.Text;

@@ -235,7 +235,7 @@ namespace PhonoWriterWord.Managers
 
             Task.Run(() =>
             {
-                _log.Debug("TextProviderManager_TextFound [text : '{0}', lastInput : '{1}']", input, _lastInput);
+                //_log.Debug("TextProviderManager_TextFound [text : '{0}', lastInput : '{1}']", input, _lastInput);
 
                 Thread.Sleep(100);
 
