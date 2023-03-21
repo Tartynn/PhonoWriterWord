@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
+using Application = Microsoft.Office.Interop.Word.Application;
 
 namespace PhonoWriterWord
 
@@ -198,6 +199,32 @@ namespace PhonoWriterWord
 
         #endregion
 
+        public static void KeyReturnPressed(System.Windows.Controls.ListViewItem item)
+        {
+            Application wordApp = null;
+            try
+            {
+                wordApp = (Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Word.Application");
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                // Word is not running; handle this case if necessary
+            }
+            var str = "";
+            if (wordApp != null)
+            {
+                Word.Document document = wordApp.ActiveDocument;
+                Range selectionRange = document.ActiveWindow.Selection.Range;
+                selectionRange.Expand(WdUnits.wdWord);
+                str = item.Content.ToString() + " ";
+                selectionRange.Text = str;
+                selectionRange.Start = selectionRange.End;
+                selectionRange.Select();
+            }
+            Word.Window window = wordApp.ActiveWindow;
+            window.SetFocus();
+            window.Activate();
+        }
 
         private void TextProvidersManager_TextFound(object sender, TextFoundArgs e)
         {
