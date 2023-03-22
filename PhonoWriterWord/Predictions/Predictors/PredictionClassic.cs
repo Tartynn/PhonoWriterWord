@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhonoWriterWord.Predictions.Predictors
+namespace PhonoWriterWord.Predictions
 {
-    class PredictionClassic : Prediction
+	class PredictionClassic : Prediction
 	{
 		public PredictionClassic()
 		{
@@ -21,22 +21,23 @@ namespace PhonoWriterWord.Predictions.Predictors
 			//if (!_app.Configuration.ClassicPredictionActivated)
 			//	return results;
 
-			//if (input.Length < _app.Configuration.ClassicPredictionsMinCharNumber)
-			//	return results;
+			if (input.Length < 3)//_app.Configuration.ClassicPredictionsMinCharNumber)
+				return results;
 
-			//if (parallelOptions.CancellationToken.IsCancellationRequested)
-			//	return results;
+			if (parallelOptions.CancellationToken.IsCancellationRequested)
+				return results;
 
-			//var numberOfPrediction = _app.Configuration.ClassicPredictionsNumber;
-			//var words = _app.LanguagesManager.CurrentLanguage.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
+			var numberOfPrediction = 9;//_app.Configuration.ClassicPredictionsNumber;
+			var fr = new Database.Models.Language(1, "fr");
+			var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
 
-			//foreach (Word word in words)
+			foreach (Word word in words)
 			{
-				//PredictionValue pv = new PredictionValue();
-				//pv.Prediction = word.Text;
-				//pv.Value = word.Occurrence;
-				//pv.Type = PredictionTypes.CLASSIC;
-				//results.Add(pv);
+				PredictionValue pv = new PredictionValue();
+				pv.Prediction = word.Text;
+				pv.Value = word.Occurrence;
+				pv.Type = PredictionType.CLASSIC;
+				results.Add(pv);
 			}
 
 			return results;
