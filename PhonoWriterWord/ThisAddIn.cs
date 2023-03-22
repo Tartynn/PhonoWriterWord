@@ -13,13 +13,10 @@ using Icare.PhonoWriter.Client.Classes;
 using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
-using System.Windows;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
-using MessageBox = System.Windows.MessageBox;
 using Application = Microsoft.Office.Interop.Word.Application;
-using System.Windows;
-//using PhonoWriterWord.Services.UpdateService;
+using PhonoWriterWord.Predictions.Predictors;
 
 namespace PhonoWriterWord
 

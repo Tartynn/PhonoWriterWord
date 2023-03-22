@@ -1,6 +1,6 @@
 ﻿using PhonoWriterWord.Database.Models;
-using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Predictions;
+using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Services.Log;
 using System;
 using System.Collections.Generic;
