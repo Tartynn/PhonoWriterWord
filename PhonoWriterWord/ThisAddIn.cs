@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using Application = Microsoft.Office.Interop.Word.Application;
 using System.Windows;
+using PhonoWriterWord.Database.Controllers;
 //using PhonoWriterWord.Services.UpdateService;
 
 namespace PhonoWriterWord
@@ -209,6 +210,17 @@ namespace PhonoWriterWord
 
             var defaultParallelOptions = new ParallelOptions();
             var words = pc.Work(word, defaultParallelOptions);
+
+            var ic = new ImagesController(DatabaseController);
+            var wc = new WordsController(DatabaseController);
+            var fr = new Database.Models.Language(1, "fr");
+            var wordObj = wc.ResearchByText(fr, word);
+
+            if (wordObj != null)
+            {
+                var img = ic.ResearchByWord(wordObj);
+                System.Diagnostics.Debug.WriteLine(img.Id);
+            }
 
             foreach (var w in words)
             {

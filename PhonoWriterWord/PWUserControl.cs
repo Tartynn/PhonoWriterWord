@@ -1,6 +1,8 @@
 ﻿using PhonoWriterWord.Database;
 using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Predictions;
+using PhonoWriterWord.Services;
+using PhonoWriterWord.Values;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +28,15 @@ namespace PhonoWriterWord
             myDoc = Globals.ThisAddIn.Application.ActiveDocument;
             myDoc.Paragraphs[1].Range.InsertParagraphBefore();
             myDoc.Paragraphs[1].Range.Text = "Button Tap.";
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            var DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
+            var DBController = new DatabaseController(DatabaseService);
+            var ic = new ImagesController(DBController);
+
+
         }
     }
 }
