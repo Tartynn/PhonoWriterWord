@@ -223,20 +223,15 @@
     <Compile Include="Managers\LanguagesManager.cs" />
     <Compile Include="Managers\PredictionsManager.cs" />
     <Compile Include="Managers\TextProvidersManager.cs" />
-    <Compile Include="Predictions\Prediction.cs" />
-    <Compile Include="Predictions\PredictionAlternative.cs" />
-    <Compile Include="Predictions\PredictionClassic.cs" />
+    <Compile Include="Predictions\Predictors\Prediction.cs" />
+    <Compile Include="Predictions\Predictors\PredictionAlternative.cs" />
+    <Compile Include="Predictions\Predictors\PredictionClassic.cs" />
     <Compile Include="Predictions\PredictionRequest.cs" />
-    <Compile Include="Predictions\PredictionsProvidersManager.cs" />
+    <Compile Include="Predictions\Providers\PredictionsProvidersManager.cs" />
     <Compile Include="Predictions\PredictionType.cs" />
     <Compile Include="Predictions\PredictionValue.cs" />
     <Compile Include="Predictions\Predictors\ClassicPredictor.cs" />
     <Compile Include="Predictions\Predictors\IPredictor.cs" />
-    <Compile Include="Predictions\Predictors\PredictionAlternative.cs" />
-    <Compile Include="Predictions\Predictors\PredictionClassic.cs" />
-    <Compile Include="Predictions\Predictors\PredictionFuzzy.cs" />
-    <Compile Include="Predictions\Predictors\PredictionPhonetic.cs" />
-    <Compile Include="Predictions\Predictors\PredictionRelationship.cs" />
     <Compile Include="Predictions\Providers\PredictionsProvider.cs" />
     <Compile Include="Predictions\Providers\PredictionsResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -303,7 +298,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\Files\Custom\" />
-    <Folder Include="Predictions\Predictors\Remote\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
