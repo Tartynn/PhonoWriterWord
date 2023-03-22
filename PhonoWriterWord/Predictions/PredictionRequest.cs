@@ -66,7 +66,7 @@ namespace PhonoWriterWord.Predictions
 				_cts.Cancel();
 		}
 
-		public List<PredictionValue> Run()
+		/*public List<PredictionValue> Run()
 		{
 			_cts = new CancellationTokenSource();
 			_parallelOptions = new ParallelOptions();
@@ -109,7 +109,7 @@ namespace PhonoWriterWord.Predictions
 			}
 
 			return new List<PredictionValue>(results.ToArray());
-		}
+		}*/
 
 		#endregion
 	}

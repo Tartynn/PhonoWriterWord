@@ -43,7 +43,7 @@ namespace PhonoWriterWord.Services
 
 			_request = new PredictionsRequest(predictions, input.Trim());
 
-			return _request.Run();
+			return null;//_request.Run();
 		}
 
 		public void UpdatePair(Language language, string first, string second, int occurrence = 1)
