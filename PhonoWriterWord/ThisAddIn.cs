@@ -209,7 +209,6 @@ namespace PhonoWriterWord
 
             foreach (var w in words)
             {
-                System.Diagnostics.Debug.WriteLine(w.Prediction);
                 lw.Items.Add(w.Prediction);
             }
         }

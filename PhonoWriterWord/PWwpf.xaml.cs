@@ -18,7 +18,28 @@ namespace PhonoWriterWord
             var item = sender as ListViewItem;
             if (item != null)
             {
-                System.Diagnostics.Debug.WriteLine(item.ToString());
+                Microsoft.Office.Interop.Word.Selection selection = Globals.ThisAddIn.Application.Selection;
+
+                if (selection.Range.Words.Count > 0)
+                {
+                    // get the word on which the cursor is
+                    Microsoft.Office.Interop.Word.Range wordRange = selection.Range.Words[1];
+
+                    // replace the word in Word doc by the word clicked on the list
+                    wordRange.Text = item.Content.ToString();
+
+                    // get the position of the end of the word
+                    int endPosition = wordRange.End;
+
+                    // move the cursor to the end of the word
+                    selection.Start = endPosition;
+                    selection.End = endPosition;
+
+                }
+
+                //selection.Range.Text = item.Content.ToString();
+
+                System.Diagnostics.Debug.WriteLine(item);
             }
         }
         private void ListViewItem_EnterPressed(object sender, KeyEventArgs e)

@@ -8,12 +8,6 @@
     <Grid>
         <Label Content="mySelection" x:Name="mySelection" x:FieldModifier="public" HorizontalAlignment="Left" VerticalAlignment="Top" Height="638" Width="302" Background="#FFC88B8B" Margin="0,0,0,-188.4" FontSize="32"/>
         <ListView Margin="0,69,0,0" Name="myList" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194" Height="200">
-            <ListViewItem Content="Coffie"></ListViewItem>
-            <ListViewItem Content="Tea"></ListViewItem>
-            <ListViewItem Content="Orange Juice"></ListViewItem>
-            <ListViewItem Content="Milk"></ListViewItem>
-            <ListViewItem Content="Iced Tea"></ListViewItem>
-            <ListViewItem Content="Mango Shake"></ListViewItem>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
