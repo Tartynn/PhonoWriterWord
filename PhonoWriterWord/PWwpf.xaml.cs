@@ -16,7 +16,7 @@ namespace PhonoWriterWord
         private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var item = sender as ListViewItem;
-            if (item != null && item.IsSelected)
+            if (item != null)
             {
                 System.Diagnostics.Debug.WriteLine(item.ToString());
             }
