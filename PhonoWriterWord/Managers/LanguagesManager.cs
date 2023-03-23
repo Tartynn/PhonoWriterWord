@@ -69,7 +69,7 @@ namespace PhonoWriterWord.Managers
         public LanguagesManager()
         {
             _app = (ThisAddIn)ThisAddIn.Current; //(App)App.Current;
-            _log = new Log(_app.LogService, GetType().Name);
+            //_log = new Log(_app.LogService, GetType().Name);
             words = new Dictionary<string, int>();
             images = new Dictionary<int, int>();
         }

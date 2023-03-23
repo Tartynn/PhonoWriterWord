@@ -31,6 +31,7 @@ namespace PhonoWriterWord.Values
         //Folders Updated
         public static readonly string solutionDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
         public static readonly string COMMON_APP_PATH = Path.Combine(solutionDirectory, "Database", "Files");
+        public static readonly string IMAGES = Path.Combine(solutionDirectory, "Images");
 
         // File
         public static readonly string CONFIG_FILE = Path.Combine(LOCAL_APP_PATH, "config.xml");

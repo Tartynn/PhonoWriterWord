@@ -47,7 +47,7 @@ namespace PhonoWriterWord.Managers
         public PredictionsManager()
         {
             _app = (ThisAddIn)ThisAddIn.Current;
-            _log = new Log(_app.LogService, GetType().Name);
+           // _log = new Log(_app.LogService, GetType().Name);
 
             _lastInput = string.Empty;
             _currentInput = string.Empty;

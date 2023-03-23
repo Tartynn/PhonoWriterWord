@@ -80,6 +80,7 @@ namespace PhonoWriterWord
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+
             usr = new PWUserControl();
             wpf = new PWwpf();
             eh = new ElementHost { Child = wpf };
@@ -100,6 +101,7 @@ namespace PhonoWriterWord
             CheckFolders();
             InitializeServices();
 
+            wpf.dbc = DatabaseController;
         }
 
         private void InitializeServices()
@@ -206,13 +208,13 @@ namespace PhonoWriterWord
             //assigning the value to our label
             System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
             label.Content = word;
-
+            ((System.Windows.Controls.Image)wpf.FindName("pictureBox")).Source = null;
             PredictionsManager.Request(word);
 
             var defaultParallelOptions = new ParallelOptions();
             var words = pc.Work(word, defaultParallelOptions);
 
-            var ic = new ImagesController(DatabaseController);
+            /*var ic = new ImagesController(DatabaseController);
             var wc = new WordsController(DatabaseController);
             var fr = new Database.Models.Language(1, "fr");
             var wordObj = wc.ResearchByText(fr, word);
@@ -221,7 +223,7 @@ namespace PhonoWriterWord
             {
                 var img = ic.ResearchByWord(wordObj);
                 System.Diagnostics.Debug.WriteLine(img.FileName);
-            }
+            }*/
 
             foreach (var w in words)
             {

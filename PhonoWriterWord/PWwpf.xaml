@@ -15,5 +15,6 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        <Image Name ="pictureBox"  HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Margin="74,274,0,0"/>
     </Grid>
 </UserControl>

@@ -258,6 +258,7 @@
     <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_13_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -308,10 +309,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_13_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A689AD2296C39E3A088BDB8BC5F648D7BFD87C48</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>D823C99D95C8D259F5335CE5F7C81799A27DE6D0</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
