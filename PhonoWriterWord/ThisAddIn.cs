@@ -17,6 +17,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
+using PhonoWriterWord.Database.Controllers;
 
 namespace PhonoWriterWord
 
@@ -210,6 +211,17 @@ namespace PhonoWriterWord
 
             var defaultParallelOptions = new ParallelOptions();
             var words = pc.Work(word, defaultParallelOptions);
+
+            var ic = new ImagesController(DatabaseController);
+            var wc = new WordsController(DatabaseController);
+            var fr = new Database.Models.Language(1, "fr");
+            var wordObj = wc.ResearchByText(fr, word);
+
+            if (wordObj != null)
+            {
+                var img = ic.ResearchByWord(wordObj);
+                System.Diagnostics.Debug.WriteLine(img.FileName);
+            }
 
             foreach (var w in words)
             {
