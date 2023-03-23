@@ -191,8 +191,12 @@ namespace PhonoWriterWord
 
         private void Application_WindowSelectionChange(Word.Selection sel)
         {
+            // the ListView will contain the list of proposed words
             System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
             lw.Items.Clear();
+
+            // the PictureBox will contain the picture related to the selected word
+            System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
             Word.Document document = this.Application.ActiveDocument;
             //select the range of the word when the cursor is on it
             Range selectionRange = document.ActiveWindow.Selection.Range;
@@ -211,6 +215,8 @@ namespace PhonoWriterWord
             {
                 lw.Items.Add(w.Prediction);
             }
+
+
         }
 
         void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)

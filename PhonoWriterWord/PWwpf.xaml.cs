@@ -30,7 +30,7 @@ namespace PhonoWriterWord
 
                     // get the position of the end of the word
                     int endPosition = wordRange.End;
-
+                    
                     // move the cursor to the end of the word
                     selection.Start = endPosition;
                     selection.End = endPosition;
