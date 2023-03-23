@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Word = Microsoft.Office.Interop.Word;
 using Microsoft.Office.Interop.Word;
@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
+
 
 namespace PhonoWriterWord
 
@@ -168,6 +169,7 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine("Error : Constants.IMAGES_CUSTOM_PATH");
 
             System.Diagnostics.Debug.WriteLine("Folders checked");
+
         }
 
         //private async Task InitializeServices()
@@ -200,6 +202,7 @@ namespace PhonoWriterWord
 
             // the PictureBox will contain the picture related to the selected word
             System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
+
             Word.Document document = this.Application.ActiveDocument;
             //select the range of the word when the cursor is on it
             Range selectionRange = document.ActiveWindow.Selection.Range;
@@ -229,10 +232,9 @@ namespace PhonoWriterWord
             {
                 lw.Items.Add(w.Prediction);
             }
-
-
         }
 
+            
         void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
         {
             Doc.Paragraphs[1].Range.InsertParagraphBefore();
