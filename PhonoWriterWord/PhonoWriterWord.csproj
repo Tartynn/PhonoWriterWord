@@ -1,4 +1,6 @@
 ﻿<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="..\packages\SQLite.3.13.0\build\net45\SQLite.props" Condition="Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--
     This section defines project-level properties.
@@ -31,6 +33,8 @@
     <DefineConstants>VSTO40</DefineConstants>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
@@ -100,11 +104,44 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SQLitePCLRaw.core, Version=2.1.4.1835, Culture=neutral, PublicKeyToken=1488e028ca7ab535, processorArchitecture=MSIL">
+      <HintPath>..\packages\SQLitePCLRaw.core.2.1.4\lib\netstandard2.0\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.117.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.117.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.117.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.117.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.117.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.117.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -161,9 +198,50 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Algorithms\SplitterHashing.cs" />
+    <Compile Include="Database\Controllers\AbstractController.cs" />
+    <Compile Include="Database\Controllers\AlternativesController.cs" />
+    <Compile Include="Database\Controllers\DefinitionsController.cs" />
+    <Compile Include="Database\Controllers\ImagesController.cs" />
+    <Compile Include="Database\Controllers\LanguagesController.cs" />
+    <Compile Include="Database\Controllers\PairsController.cs" />
+    <Compile Include="Database\Controllers\WordsController.cs" />
+    <Compile Include="Database\DatabaseController.cs" />
+    <Compile Include="Database\Models\Alternative.cs" />
+    <Compile Include="Database\Models\Definition.cs" />
+    <Compile Include="Database\Models\Image.cs" />
+    <Compile Include="Database\Models\Language.cs" />
+    <Compile Include="Database\Models\Pair.cs" />
+    <Compile Include="Database\Models\Word.cs" />
+    <Compile Include="Enumerations\LanguagesEnum.cs" />
+    <Compile Include="Exceptions\AlternativeNotFoundException.cs" />
+    <Compile Include="Exceptions\DefinitionNotFoundException.cs" />
+    <Compile Include="Exceptions\ImageNotFoundException.cs" />
+    <Compile Include="Exceptions\LanguageNotFoundException.cs" />
+    <Compile Include="Exceptions\NoConnectionAvailableException.cs" />
+    <Compile Include="Exceptions\WordNotFoundException.cs" />
+    <Compile Include="Managers\LanguagesManager.cs" />
+    <Compile Include="Managers\PredictionsManager.cs" />
+    <Compile Include="Managers\TextProvidersManager.cs" />
+    <Compile Include="Predictions\Predictors\Prediction.cs" />
+    <Compile Include="Predictions\Predictors\PredictionAlternative.cs" />
+    <Compile Include="Predictions\Predictors\PredictionClassic.cs" />
+    <Compile Include="Predictions\PredictionRequest.cs" />
+    <Compile Include="Predictions\Providers\PredictionsProvidersManager.cs" />
+    <Compile Include="Predictions\PredictionType.cs" />
+    <Compile Include="Predictions\PredictionValue.cs" />
+    <Compile Include="Predictions\Predictors\ClassicPredictor.cs" />
+    <Compile Include="Predictions\Predictors\IPredictor.cs" />
+    <Compile Include="Predictions\Providers\PredictionsProvider.cs" />
+    <Compile Include="Predictions\Providers\PredictionsResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sources\Classes\Configuration.cs" />
+    <Compile Include="Sources\Classes\TextProvider.cs" />
+    <Compile Include="Sources\Predictions\PredictionRequest.cs" />
+    <Compile Include="Services\UpdateService\DesktopUpdateService.cs" />
+    <Compile Include="Values\Constants.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -176,6 +254,11 @@
     <EmbeddedResource Include="PWUserControl.resx">
       <DependentUpon>PWUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="App.config" />
+    <None Include="Database\Files\dictionary.db" />
+    <None Include="packages.config" />
+    <None Include="PhonoWriterWord_13_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -194,6 +277,10 @@
     <Compile Include="PWwpf.xaml.cs">
       <DependentUpon>PWwpf.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\DatabaseServices.cs" />
+    <Compile Include="Services\LogService\Log.cs" />
+    <Compile Include="Services\LogService\LogService.cs" />
+    <Compile Include="Services\PredictionsService.cs" />
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -211,6 +298,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Database\Files\Custom\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -219,10 +309,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>CD1F5945B360D9A80068AB30E4CC6840699BEDB4</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>D823C99D95C8D259F5335CE5F7C81799A27DE6D0</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -239,4 +329,15 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLite.3.13.0\build\net45\SQLite.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.117.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.117.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.117.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.117.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
 </Project>

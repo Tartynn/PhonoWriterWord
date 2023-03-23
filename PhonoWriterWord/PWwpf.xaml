@@ -7,6 +7,14 @@
              mc:Ignorable="d" Height="636.549" Width="621.614">
     <Grid>
         <Label Content="mySelection" x:Name="mySelection" x:FieldModifier="public" HorizontalAlignment="Left" VerticalAlignment="Top" Height="638" Width="302" Background="#FFC88B8B" Margin="0,0,0,-188.4" FontSize="32"/>
-        
+        <ListView Margin="0,69,0,0" Name="myList" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194" Height="200">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                    <EventSetter Event="KeyDown"  Handler="ListViewItem_EnterPressed"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <Image Name ="pictureBox"  HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Margin="74,274,0,0"/>
     </Grid>
 </UserControl>
