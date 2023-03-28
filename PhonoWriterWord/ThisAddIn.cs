@@ -245,6 +245,13 @@ namespace PhonoWriterWord
             {
                 lw.Items.Add(w.Prediction);
             }
+
+            if (lw.Items.Count > 0)
+            {
+                lw.SelectedIndex = 0;
+                //wpf.LoadImage(new Database.Models.Language(1, "fr"),lw.SelectedItem.ToString());
+            }
+
         }
 
             

@@ -20,51 +20,22 @@ namespace PhonoWriterWord
             this.dbc = dbc;
         }
 
-        private void 
-            Item_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void LoadImage(Database.Models.Language lan, String str)
         {
-            var item = sender as ListViewItem;
-            if (item != null)
+            var wc = new WordsController(dbc);
+            var ic = new ImagesController(dbc);
+            var wordObj = wc.ResearchByText(lan, str);
+            String path = "";
+            pictureBox.Source = null;
+            if (wordObj != null)
             {
-                Microsoft.Office.Interop.Word.Selection selection = Globals.ThisAddIn.Application.Selection;
-
-                //if (selection.Range.Words.Count > 0)
-                //{
-                //    // get the word on which the cursor is
-                //    Microsoft.Office.Interop.Word.Range wordRange = selection.Range.Words[1];
-
-                //    // replace the word in Word doc by the word clicked on the list
-                //    wordRange.Text = item.Content.ToString();
-
-                //    // get the position of the end of the word
-                //    int endPosition = wordRange.End;
-
-                //    // move the cursor to the end of the word
-                //    selection.Start = endPosition;
-                //    selection.End = endPosition;
-
-                //}
-
-                //selection.Range.Text = item.Content.ToString();
-
-                System.Diagnostics.Debug.WriteLine(item);
-                var ic = new ImagesController(dbc);
-                var wc = new WordsController(dbc);
-                var fr = new Database.Models.Language(1, "fr");
-                var wordObj = wc.ResearchByText(fr, item.Content.ToString());
-                String path="";
-                pictureBox.Source = null;
-                if (wordObj != null)
+                var img = ic.ResearchByWord(wordObj);
+                if (img != null)
                 {
-                    var img = ic.ResearchByWord(wordObj);
-                    if (img!= null)
-                    {
-                        System.Diagnostics.Debug.WriteLine(img.FileName);
-                        path = Constants.IMAGES + "\\" + img.FileName;
-                        LoadImage(path);
-                    }
+                    System.Diagnostics.Debug.WriteLine(img.FileName);
+                    path = Constants.IMAGES + "\\" + img.FileName;
+                    LoadImage(path);
                 }
-                
             }
         }
 
@@ -86,9 +57,15 @@ namespace PhonoWriterWord
             {
                 ThisAddIn.KeyReturnPressed(item);
             }
-            if (e.Key == Key.Space)
+        }
+
+        private void ListViewItem_Selected(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item != null)
             {
-                myList.Items.Add("uwu");
+                var fr = new Database.Models.Language(1, "fr");
+                LoadImage(fr, item.Content.ToString());
             }
         }
     }
