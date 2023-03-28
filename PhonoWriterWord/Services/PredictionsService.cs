@@ -66,7 +66,7 @@ namespace PhonoWriterWord.Services
 				pair.Occurrence += occurrence;
 				pair.IsUpdated = true;
 				_app.DatabaseController.PairsController.Update(pair);
-				//_log.Debug("UpdatePair -> updated '{0}' <-> '{1}' pair (Occurrence : {2})", first, second, pair.Occurrence);
+				System.Diagnostics.Debug.WriteLine("UpdatePair -> updated '{0}' <-> '{1}' pair (Occurrence : {2})", first, second, pair.Occurrence);
 				return; // Pass the creation part.
 			}
 
@@ -74,7 +74,7 @@ namespace PhonoWriterWord.Services
 			pair = new Pair(wordFirst, wordSecond);
 			pair.IsUpdated = true;
 			_app.DatabaseController.PairsController.Create(pair);
-			//_log.Debug("UpdatePair -> created '{0}' <-> '{1}' pair", first, second);
+			System.Diagnostics.Debug.WriteLine("UpdatePair -> created '{0}' <-> '{1}' pair", first, second);
 		}
 
 		#endregion
