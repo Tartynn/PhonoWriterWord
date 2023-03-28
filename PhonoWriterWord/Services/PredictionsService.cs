@@ -1,5 +1,6 @@
 ﻿using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Predictions;
+using PhonoWriterWord.Sources.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace PhonoWriterWord.Services
 
 		private ThisAddIn _app;
 
-        //private Configuration _config;
+        private Configuration _config;
         //private Log _log;
 
         private PredictionsRequest _request;
@@ -25,9 +26,9 @@ namespace PhonoWriterWord.Services
 
 		public PredictionsService()
 		{
-			_app = (ThisAddIn)ThisAddIn.Current;
+			_app = ThisAddIn.Current;
 			//_log = new Log(_app.LogService, GetType().Name);
-			//_config = _app.Configuration;
+			_config = (Configuration)_app.Configuration;
 		}
 
 		#endregion
@@ -43,7 +44,7 @@ namespace PhonoWriterWord.Services
 
 			_request = new PredictionsRequest(predictions, input.Trim());
 
-			return null;//_request.Run();
+			return _request.Run();
 		}
 
 		public void UpdatePair(Language language, string first, string second, int occurrence = 1)

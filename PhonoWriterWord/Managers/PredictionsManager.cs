@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PhonoWriterWord.Algorithms.Fuzzy;
+using PhonoWriterWord.Enumerations;
 
 namespace PhonoWriterWord.Managers
 {
@@ -24,7 +26,7 @@ namespace PhonoWriterWord.Managers
         private List<Prediction> _predictions;
         private PredictionClassic _predictionClassic;
         private PredictionAlternative _predictionAlternative;
-        //private PredictionFuzzy _predictionFuzzy;
+        private PredictionFuzzy _predictionFuzzy;
         //private PredictionPhonetic _predictionPhonetic;
         //private PredictionRelationship _predictionRelationship;
 
@@ -161,19 +163,19 @@ namespace PhonoWriterWord.Managers
             //if (predictionsStrings.Count > max)
             //    predictionsStrings.RemoveRange(max, predictionsStrings.Count - max);
 
-            //// Put the most similar hashed word on top.
-            //var inputHash = Algorithms.Splitter(input, (LanguagesEnum)_app.Configuration.Language);
-            //for (int i = 0; i < predictionsStrings.Count; i++)
-            //{
-            //    string prediction = predictionsStrings[i];
-            //    var predictionHash = Algorithms.Splitter(predictionsStrings[i], (LanguagesEnum)_app.Configuration.Language);
-            //    if (inputHash == predictionHash)
-            //    {
-            //        predictionsStrings.RemoveAt(i);
-            //        predictionsStrings.Insert(0, prediction); // Put word on top.
-            //        break;
-            //    }
-            //}
+            // Put the most similar hashed word on top.
+            var inputHash = Algorithms.Fuzzy.Algorithms.Splitter(input, LanguagesEnum.Francais);
+           for (int i = 0; i < predictionsStrings.Count; i++)
+            {
+                string prediction = predictionsStrings[i];
+                var predictionHash = Algorithms.Fuzzy.Algorithms.Splitter(predictionsStrings[i], LanguagesEnum.Francais);
+                if (inputHash == predictionHash)
+                {
+                    predictionsStrings.RemoveAt(i);
+                    predictionsStrings.Insert(0, prediction); // Put word on top.
+                    break;
+                }
+            }
 
             // Add alternatives on top of all
             predictionsStrings.InsertRange(0, alternatives.Select(s => s.Prediction).Distinct().ToList());
@@ -188,7 +190,7 @@ namespace PhonoWriterWord.Managers
             {
                 case PredictionsEnum.Classic: prediction = _predictionClassic; break;
                 case PredictionsEnum.Alternative: prediction = _predictionAlternative; break;
-                //case PredictionsEnum.Fuzzy: prediction = _predictionFuzzy; break;
+                case PredictionsEnum.Fuzzy: prediction = _predictionFuzzy; break;
                 //case PredictionsEnum.Phonetic: prediction = _predictionPhonetic; break;
                 //case PredictionsEnum.Relationship: prediction = _predictionRelationship; break;
             }
@@ -201,7 +203,7 @@ namespace PhonoWriterWord.Managers
             // Initialize prediction systems.
             _predictionClassic = new PredictionClassic();
             _predictionAlternative = new PredictionAlternative();
-            //_predictionFuzzy = new PredictionFuzzy();
+            _predictionFuzzy = new PredictionFuzzy();
             //_predictionPhonetic = new PredictionPhonetic();
             //_predictionRelationship = new PredictionRelationship();
 
@@ -209,7 +211,7 @@ namespace PhonoWriterWord.Managers
 
             _predictions.Add(_predictionClassic);
             _predictions.Add(_predictionAlternative);
-            //_predictions.Add(_predictionFuzzy);
+            _predictions.Add(_predictionFuzzy);
             //if (_app.Configuration.PhoneticPredictionActivated && _app.EnginesManager.HasEngines && _predictionPhonetic != null)
             //    _predictions.Add(_predictionPhonetic);
         }
@@ -237,20 +239,20 @@ namespace PhonoWriterWord.Managers
 
             // Launch request.
 
-            Task.Run(() =>
-            {
-                //_log.Debug("TextProviderManager_TextFound [text : '{0}', lastInput : '{1}']", input, _lastInput);
+            _ = Task.Run(() =>
+              {
+                 //s _log.Debug("TextProviderManager_TextFound [text : '{0}', lastInput : '{1}']", input, _lastInput);
 
-                Thread.Sleep(100);
+                  Thread.Sleep(100);
 
-                if (input != _lastInput) return; // Exit task if a new one has been called.
+                  if (input != _lastInput) return; // Exit task if a new one has been called.
 
                 List<PredictionValue> results = _app.PredictionsService.Request(predictions, input);
-                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request sent with predictions + input");
+                  System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request sent with predictions + input");
 
-                PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, results));
-                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - END of request");
-            });
+                  PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, results));
+                  System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - END of request");
+              });
         }
 
         //public void RequestRelationshipsAsync(string input)

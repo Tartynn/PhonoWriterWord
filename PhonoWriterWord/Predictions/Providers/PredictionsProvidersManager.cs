@@ -130,19 +130,19 @@ namespace PhonoWriterWord.Predictions
             if (predictions.Count > max)
                 predictions.RemoveRange(max, predictions.Count - max);
 
-            //// Put the most similar hashed word on top.
-            //var inputHash = Algorithms.Fuzzy.Fuzzy.Current(input, (LanguagesEnum)_configuration.Dictionary);
-            //for (int i = 0; i < predictions.Count; i++)
-            //{
-            //    string prediction = predictions[i];
-            //    var predictionHash = Algorithms.Fuzzy.Fuzzy.Current(predictions[i], (LanguagesEnum)_configuration.Dictionary);
-            //    if (inputHash == predictionHash)
-            //    {
-            //        predictions.RemoveAt(i);
-            //        predictions.Insert(0, prediction); // Put word on top.
-            //        break;
-            //    }
-            //}
+            // Put the most similar hashed word on top.
+            var inputHash = Algorithms.Fuzzy.Algorithms.Current(input , (LanguagesEnum)'1');
+            for (int i = 0; i < predictions.Count; i++)
+            {
+                string prediction = predictions[i];
+                var predictionHash = Algorithms.Fuzzy.Algorithms.Current(predictions[i], (LanguagesEnum)'1');
+                if (inputHash == predictionHash)
+                {
+                    predictions.RemoveAt(i);
+                    predictions.Insert(0, prediction); // Put word on top.
+                  break;
+                }
+            }
 
             return predictions;
         }
@@ -170,63 +170,63 @@ namespace PhonoWriterWord.Predictions
 
             _lastInput = input;
 
-            Task.Run(() =>
-            {
-                _log.Debug("Requested '{0}'", input);
+            _ = Task.Run(() =>
+              {
+                  _log.Debug("Requested '{0}'", input);
 
-                List<string> predictions = new List<string>();
+                  List<string> predictions = new List<string>();
 
-                if (!string.IsNullOrWhiteSpace(input))
-                {
+                  if (!string.IsNullOrWhiteSpace(input))
+                  {
                     // Sleep for a while to prevent computing too soon (less collisions).
                     int time = 20;
-                    if (phoneticPredictions > 0) time += 100;
-                    if (fuzzyPredictions > 0) time += 50;
-                    Thread.Sleep(time);
+                      if (phoneticPredictions > 0) time += 100;
+                      if (fuzzyPredictions > 0) time += 50;
+                      Thread.Sleep(time);
 
                     // Soft cancel (stop request).
                     if (input != _lastInput)
-                        return;
+                          return;
 
-                    foreach (var provider in providers)
-                        predictions.AddRange(
-                            provider.Request(
-                                input,
-                                context,
-                                language,
-                                classicPredictions,
-                                fuzzyPredictions,
-                                phoneticPredictions,
-                                0
-                            ).Predictions
-                        );
+                      foreach (var provider in providers)
+                          predictions.AddRange(
+                              provider.Request(
+                                  input,
+                                  context,
+                                  language,
+                                  classicPredictions,
+                                  fuzzyPredictions,
+                                  phoneticPredictions,
+                                  0
+                              ).Predictions
+                          );
 
                     // Soft cancel (stop request).
                     if (input != _lastInput)
-                        return;
+                          return;
 
-                    predictions = Filter(predictions, input.Trim());
-                }
+                      predictions = Filter(predictions, input.Trim());
+                  }
 
-                if (!string.IsNullOrWhiteSpace(previousWord) && input.Length == 0)
-                {
-                    foreach (var provider in providers)
-                    {
-                        predictions.InsertRange(
-                            0,
-                            provider.Request(
-                                input,
-                                context,
-                                language,
-                                0,
-                                0,
-                                0,
-                                150
-                            ).Predictions //.Where(w => w.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).Reverse().Take(5)
-                        );
-                        predictions = predictions.Distinct().ToList();
-                    }
-                }
+                  if (!string.IsNullOrWhiteSpace(previousWord) && input.Length == 0)
+                  {
+                      foreach (var provider in providers)
+                      {
+                          predictions.InsertRange(
+                              0,
+                              provider.Request(
+                                  input,
+                                  context,
+                                  language,
+                                  0,
+                                  0,
+                                  0,
+                                  150
+                              ).Predictions //.Where(w => w.StartsWith(input, StringComparison.CurrentCultureIgnoreCase)).Reverse().Take(5)
+                          );
+                          predictions = predictions.Distinct().ToList();
+                      }
+                  }
 
                 // TODO: Eventually find a way to make this plateform dependent. The following line where used before mac native next word prediction
                 //if (!string.IsNullOrWhiteSpace(previousWord))
@@ -249,7 +249,7 @@ namespace PhonoWriterWord.Predictions
                 //    }
                 //}
                 PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, predictions));
-            });
+              });
         }
     }
 

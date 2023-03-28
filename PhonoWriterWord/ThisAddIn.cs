@@ -73,10 +73,13 @@ namespace PhonoWriterWord
         public LogService LogService { get; protected set; }
         public DatabaseService DatabaseService { get; set; }
         public PredictionsService PredictionsService { get; protected set; }
+        public object Configuration { get; internal set; }
+
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
 
         public Prediction pc = new PredictionClassic();
+        public Prediction pf = new PredictionFuzzy();
         #endregion
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
@@ -196,7 +199,11 @@ namespace PhonoWriterWord
 
         private void Application_WindowSelectionChange(Word.Selection sel)
         {
-            // the ListView will contain the list of proposed words
+            // the
+            //
+            //
+            //
+            // will contain the list of proposed words
             System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
             lw.Items.Clear();
 
@@ -216,6 +223,7 @@ namespace PhonoWriterWord
 
             var defaultParallelOptions = new ParallelOptions();
             var words = pc.Work(word, defaultParallelOptions);
+            var words1 = pf.Work(word, defaultParallelOptions);
 
             /*var ic = new ImagesController(DatabaseController);
             var wc = new WordsController(DatabaseController);
@@ -228,7 +236,12 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine(img.FileName);
             }*/
 
-            foreach (var w in words)
+     //       foreach (var w in words)
+     //       {
+     //           lw.Items.Add(w.Prediction);
+     //       }
+
+            foreach (var w in words1)
             {
                 lw.Items.Add(w.Prediction);
             }

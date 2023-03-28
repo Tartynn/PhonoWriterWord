@@ -51,8 +51,8 @@ namespace PhonoWriterWord.Predictions
 		public PredictionsRequest(List<Prediction> predictions, string input)
 		{
 			_app = (ThisAddIn)ThisAddIn.Current;
-			//_log = new Log(_app.LogService, GetType().Name);
-			_predictions = predictions;
+            //_log = new Log(_app.LogService, GetType().Name);
+            _predictions = predictions;
 			_input = input;
 		}
 
@@ -107,8 +107,9 @@ namespace PhonoWriterWord.Predictions
 				_cts.Dispose();
 				_cts = null;
 			}
-
+			System.Diagnostics.Debug.WriteLine(results);
 			return new List<PredictionValue>(results.ToArray());
+			
 		}
 
 		#endregion

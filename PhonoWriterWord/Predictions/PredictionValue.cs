@@ -1,4 +1,6 @@
-﻿namespace PhonoWriterWord.Predictions
+﻿using System;
+
+namespace PhonoWriterWord.Predictions
 {
     public class PredictionValue
     {
@@ -18,5 +20,10 @@
 
         public PredictionType Type
         { get; set; }
+
+        public static implicit operator string(PredictionValue v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
