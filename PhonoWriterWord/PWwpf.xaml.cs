@@ -102,10 +102,13 @@ namespace PhonoWriterWord
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, EventArgs e)
         {
             var selection = sender as ComboBox;
-            ThisAddIn.LanguageChanged(selection.Text);
+            // selection.Text doesn't work properly
+            string selectedItem = selection.SelectedItem.ToString();
+            // a bit hacky, but at least this sends the language that user clicks on..
+            ThisAddIn.LanguageChanged(selectedItem.Replace("System.Windows.Controls.ComboBoxItem: ", ""));
         }
     }
 }

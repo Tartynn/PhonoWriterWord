@@ -336,63 +336,41 @@ namespace PhonoWriterWord
         }
         public static void LanguageChanged(string selectedLanguage)
         {
-            // Here ass well lm has to be initialized (i think) and tbh makes no sense
-            // Also this seems to select the previous selected language from the dropdown - not the biggest issue atm though
-            //var lm = new LanguagesManager();
-            //lm.Initialize();
             var lm = Globals.ThisAddIn.LanguagesManager;
-            Database.Models.Language dml = new Database.Models.Language();
+            Database.Models.Language language = new Database.Models.Language();
 
             if (selectedLanguage == "Francais")
             {
-                dml = lm.GetLanguage(LanguagesEnum.Francais);
-                lm.CurrentLanguage = dml;
-                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+                language = lm.GetLanguage(LanguagesEnum.Francais);
+                lm.CurrentLanguage = language;
             }
             else if (selectedLanguage == "English")
             {
-                dml = lm.GetLanguage(LanguagesEnum.English);
-                lm.CurrentLanguage = dml;
-                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+                language = lm.GetLanguage(LanguagesEnum.English);
+                lm.CurrentLanguage = language;
             }
             else if (selectedLanguage == "Deutsch")
             {
-                dml = lm.GetLanguage(LanguagesEnum.Deutsch);
-                lm.CurrentLanguage = dml;
-                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+                language = lm.GetLanguage(LanguagesEnum.Deutsch);
+                lm.CurrentLanguage = language;
             }
             else if (selectedLanguage == "Italiano")
             {
-                dml = lm.GetLanguage(LanguagesEnum.Italiano);
-                lm.CurrentLanguage = dml;
-                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+                language = lm.GetLanguage(LanguagesEnum.Italiano);
+                lm.CurrentLanguage = language;
             }
             else if (selectedLanguage == "Spanish")
             {
-                dml = lm.GetLanguage(LanguagesEnum.Spanish);
-                lm.CurrentLanguage = dml;
-                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+                language = lm.GetLanguage(LanguagesEnum.Spanish);
+                lm.CurrentLanguage = language;
+                
             }
 
-            //System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
-
-
-            // Ignore these
-
-            //Database.Models.Language language = lm.CurrentLanguage;
-            //List<Database.Models.Word> words = lm.CurrentLanguage.Words;
-
-
-            //var lm = new LanguagesManager();
-            //lm.Initialize();
-
-            //System.Diagnostics.Debug.WriteLine(langg.Label);
-
-
-
-            //var lng = lc.Research(id);
-
-            //System.Diagnostics.Debug.WriteLine("LNG" + lng.Iso);
+            // LanguagesManager is null on startup, because for some reason this method gets called before InitializeServices is finished
+            if (lm != null)
+            {
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
         }
     }
 }
