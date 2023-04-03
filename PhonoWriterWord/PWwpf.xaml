@@ -17,5 +17,12 @@
             </ListView.ItemContainerStyle>
         </ListView>
         <Image Name ="pictureBox"  HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Margin="74,274,0,0"/>
+        <ComboBox Name = "languagesBox" Margin="0,482,450,0" RenderTransformOrigin = "0,0" HorizontalAlignment = "Right" Width = "130" Height = "25" VerticalAlignment = "Top" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem IsSelected = "True" >Francais</ComboBoxItem >
+            <ComboBoxItem >English</ComboBoxItem>
+            <ComboBoxItem >Deutsch</ComboBoxItem>
+            <ComboBoxItem >Italiano</ComboBoxItem>
+            <ComboBoxItem >Spanish</ComboBoxItem>
+        </ComboBox>
     </Grid>
 </UserControl>

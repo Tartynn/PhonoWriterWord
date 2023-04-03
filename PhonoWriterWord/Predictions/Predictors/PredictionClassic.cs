@@ -29,10 +29,12 @@ namespace PhonoWriterWord.Predictions.Predictors
 				return results;
 
 			var numberOfPrediction = 9;//_app.Configuration.ClassicPredictionsNumber;
-			var fr = new Database.Models.Language(1, "fr");
-			var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
+			//var fr = new Database.Models.Language(1, "fr");
+			var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;
+            //var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
+			var words = language.Words.Where(w => w.Text.StartsWith(input, System.StringComparison.InvariantCultureIgnoreCase)).OrderByDescending(o => o.Occurrence).Take(numberOfPrediction).ToList();
 
-			foreach (Word word in words)
+            foreach (Word word in words)
 			{
 
 				PredictionValue pv = new PredictionValue();

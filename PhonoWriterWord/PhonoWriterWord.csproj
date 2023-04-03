@@ -264,8 +264,11 @@
       <DependentUpon>PWUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="Database\Files\Custom\dictionary.db" />
     <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
+    <None Include="PhonoWriterWord_17_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -316,10 +319,9 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>CD1F5945B360D9A80068AB30E4CC6840699BEDB4</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

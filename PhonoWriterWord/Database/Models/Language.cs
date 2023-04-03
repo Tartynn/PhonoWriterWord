@@ -61,8 +61,16 @@ namespace PhonoWriterWord.Database.Models
             {
                 if (words.Count == 0)
                 {
-                    words = DatabaseController.databaseController.WordsController.ResearchAllWords(this);
-                    words.ForEach(e => WordsAsString.Add(e.Text));
+                    var dbc = DatabaseController.databaseController;
+                    if (dbc != null)
+                    {
+                        words = dbc.WordsController.ResearchAllWords(this);
+                        words.ForEach(e => WordsAsString.Add(e.Text));
+                    } else
+                    {
+                        System.Diagnostics.Debug.WriteLine("DBC was null");
+                    }
+
                 }
                 return words;
             }

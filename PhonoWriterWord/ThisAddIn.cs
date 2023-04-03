@@ -18,7 +18,9 @@ using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
-using System.Linq;
+using PhonoWriterWord.Enumerations;
+using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Sources.Classes;
 
 namespace PhonoWriterWord
 
@@ -77,6 +79,7 @@ namespace PhonoWriterWord
         public DatabaseService DatabaseService { get; set; }
         public PredictionsService PredictionsService { get; protected set; }
         public object Configuration { get; internal set; }
+        public static object config { get; private set; }
 
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
@@ -108,12 +111,8 @@ namespace PhonoWriterWord
             CheckDatabase();
             CheckFolders();
             InitializeServices();
+            
 
-            // TESTS ========================================
-            //RegisterTextProviders();
-            //PredictionsManager.PredictionsFound += PredictionsManager_PredictionFound;
-            TextProvidersManager.TextFound += TextProvidersManager_TextFound;
-            // ==============================================
 
             wpf.dbc = DatabaseController;
         }
@@ -135,7 +134,8 @@ namespace PhonoWriterWord
             //    SpyService = new SpyServiceWin11();
 
             // Start managers and services.
-            //LanguagesManager.Initialize();
+            System.Diagnostics.Debug.WriteLine("Initializing services");
+            LanguagesManager.Initialize();
             PredictionsManager.Initialize();
             TextProvidersManager.Initialize();
 
@@ -428,6 +428,44 @@ namespace PhonoWriterWord
 
             // Store current input for futur usage.
             _currentInput = e.Text;
+        }
+        public static void LanguageChanged(string selectedLanguage)
+        {
+            var lm = Globals.ThisAddIn.LanguagesManager;
+            Database.Models.Language language = new Database.Models.Language();
+
+            if (selectedLanguage == "Francais")
+            {
+                language = lm.GetLanguage(LanguagesEnum.Francais);
+                lm.CurrentLanguage = language;
+            }
+            else if (selectedLanguage == "English")
+            {
+                language = lm.GetLanguage(LanguagesEnum.English);
+                lm.CurrentLanguage = language;
+            }
+            else if (selectedLanguage == "Deutsch")
+            {
+                language = lm.GetLanguage(LanguagesEnum.Deutsch);
+                lm.CurrentLanguage = language;
+            }
+            else if (selectedLanguage == "Italiano")
+            {
+                language = lm.GetLanguage(LanguagesEnum.Italiano);
+                lm.CurrentLanguage = language;
+            }
+            else if (selectedLanguage == "Spanish")
+            {
+                language = lm.GetLanguage(LanguagesEnum.Spanish);
+                lm.CurrentLanguage = language;
+                
+            }
+
+            // LanguagesManager is null on startup, because for some reason this method gets called before InitializeServices is finished
+            if (lm != null)
+            {
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
         }
     }
 }
