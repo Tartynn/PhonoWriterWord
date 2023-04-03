@@ -18,7 +18,8 @@ using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
-
+using PhonoWriterWord.Enumerations;
+using PhonoWriterWord.Database.Models;
 
 namespace PhonoWriterWord
 
@@ -123,7 +124,7 @@ namespace PhonoWriterWord
             //    SpyService = new SpyServiceWin11();
 
             // Start managers and services.
-            //LanguagesManager.Initialize();
+            LanguagesManager.Initialize();
             PredictionsManager.Initialize();
             TextProvidersManager.Initialize();
 
@@ -327,6 +328,63 @@ namespace PhonoWriterWord
 
             // Store current input for futur usage.
             _currentInput = e.Text;
+        }
+        public static void LanguageChanged(string selectedLanguage)
+        {
+            // Here ass well lm has to be initialized (i think) and tbh makes no sense
+            // Also this seems to select the previous selected language from the dropdown - not the biggest issue atm though
+            var lm = new LanguagesManager();
+            lm.Initialize();
+            Database.Models.Language dml = new Database.Models.Language();
+
+            if (selectedLanguage == "Francais")
+            {
+                dml = lm.GetLanguage(LanguagesEnum.Francais);
+                lm.CurrentLanguage = dml;
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
+            else if (selectedLanguage == "English")
+            {
+                dml = lm.GetLanguage(LanguagesEnum.English);
+                lm.CurrentLanguage = dml;
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
+            else if (selectedLanguage == "Deutsch")
+            {
+                dml = lm.GetLanguage(LanguagesEnum.Deutsch);
+                lm.CurrentLanguage = dml;
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
+            else if (selectedLanguage == "Italiano")
+            {
+                dml = lm.GetLanguage(LanguagesEnum.Italiano);
+                lm.CurrentLanguage = dml;
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
+            else if (selectedLanguage == "Spanish")
+            {
+                dml = lm.GetLanguage(LanguagesEnum.Spanish);
+                lm.CurrentLanguage = dml;
+                System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+            }
+
+            
+            // Ignore these
+
+            //Database.Models.Language language = lm.CurrentLanguage;
+            //List<Database.Models.Word> words = lm.CurrentLanguage.Words;
+
+
+            //var lm = new LanguagesManager();
+            //lm.Initialize();
+
+            //System.Diagnostics.Debug.WriteLine(langg.Label);
+
+
+
+            //var lng = lc.Research(id);
+
+            //System.Diagnostics.Debug.WriteLine("LNG" + lng.Iso);
         }
     }
 }

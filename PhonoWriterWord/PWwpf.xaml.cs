@@ -1,5 +1,10 @@
-﻿using PhonoWriterWord.Database;
+﻿using Microsoft.Office.Interop.Word;
+using PhonoWriterWord.Database;
 using PhonoWriterWord.Database.Controllers;
+using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Enumerations;
+using PhonoWriterWord.Exceptions;
+using PhonoWriterWord.Managers;
 using PhonoWriterWord.Values;
 using System;
 using System.Windows.Controls;
@@ -14,10 +19,15 @@ namespace PhonoWriterWord
     public partial class PWwpf : UserControl
     {
         public DatabaseController dbc;
+        public LanguagesManager lm;
+        private ThisAddIn _app;
+
         public PWwpf()
         {
             InitializeComponent();
             this.dbc = dbc;
+            this.lm = lm;
+            this._app = _app;
         }
 
         private void 
@@ -50,7 +60,16 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine(item);
                 var ic = new ImagesController(dbc);
                 var wc = new WordsController(dbc);
+                // below the only way atm when it doesn't crash when list item clicked
                 var fr = new Database.Models.Language(1, "fr");
+
+                // _app is null => crash
+                //var language = _app.LanguagesManager.CurrentLanguage;
+
+                // most promising, but LanguagesManager is null if not initialized first
+                // but LanguagesManager.Initialize() returns hardcoded language ("CurrentLanguage = _languages[0]; //_app.Configuration.Language - 1];" on line 109 @LanguagesManager)
+                //var lang = new Database.Models.Language(lm.CurrentLanguage.Id, lm.CurrentLanguage.Iso);
+                //System.Diagnostics.Debug.WriteLine("Current language in listview " + language.Id + language.Iso);
                 var wordObj = wc.ResearchByText(fr, item.Content.ToString());
                 String path="";
                 pictureBox.Source = null;
@@ -90,6 +109,12 @@ namespace PhonoWriterWord
             {
                 myList.Items.Add("uwu");
             }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selection = sender as ComboBox;
+            ThisAddIn.LanguageChanged(selection.Text);
         }
     }
 }
