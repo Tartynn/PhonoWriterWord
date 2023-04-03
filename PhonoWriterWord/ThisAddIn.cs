@@ -81,8 +81,8 @@ namespace PhonoWriterWord
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
 
-        //public Prediction pc = new PredictionClassic();
-        //public Prediction pf = new PredictionFuzzy();
+        public Prediction pc = new PredictionClassic();
+        public Prediction pf = new PredictionFuzzy();
         public Prediction pr = new PredictionRelationship();
         #endregion
 
@@ -110,7 +110,7 @@ namespace PhonoWriterWord
             InitializeServices();
 
             // TESTS ========================================
-            RegisterTextProviders();
+            //RegisterTextProviders();
             //PredictionsManager.PredictionsFound += PredictionsManager_PredictionFound;
             TextProvidersManager.TextFound += TextProvidersManager_TextFound;
             // ==============================================
@@ -313,8 +313,8 @@ namespace PhonoWriterWord
             //=================================================================================
 
             var defaultParallelOptions = new ParallelOptions();
-            //var words = pc.Work(word, defaultParallelOptions);
-            //var words1 = pf.Work(word, defaultParallelOptions);
+            var words = pc.Work(word, defaultParallelOptions);
+            var words1 = pf.Work(word, defaultParallelOptions);
             var words2 = pr.Work(word, defaultParallelOptions);
 
 
@@ -335,7 +335,7 @@ namespace PhonoWriterWord
      //           lw.Items.Add(w.Prediction);
      //       }
 
-            foreach (var w in words2)
+            foreach (var w in words1)
             {
                 lw.Items.Add(w.Prediction);
             }

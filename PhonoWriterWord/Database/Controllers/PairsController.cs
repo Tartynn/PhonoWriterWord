@@ -82,10 +82,10 @@ namespace PhonoWriterWord.Database.Controllers
                     pair.NextWord = Convert.ToInt32(dr.ItemArray[2]);
                     pair.Occurrence = Convert.ToInt32(dr.ItemArray[3]);
                     pair.IsUpdated = Convert.ToBoolean(dr.ItemArray[4]);
-
+                    System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - PairsController - check dt + reader : " + pair.ToString());
                     pairs.Add(pair);
                 }
-                System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - PairsController - check dt + reader : " + pair.ToString());
+
                 return pairs;
             });
         }
