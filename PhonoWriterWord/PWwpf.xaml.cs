@@ -1,5 +1,10 @@
-﻿using PhonoWriterWord.Database;
+﻿using Microsoft.Office.Interop.Word;
+using PhonoWriterWord.Database;
 using PhonoWriterWord.Database.Controllers;
+using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Enumerations;
+using PhonoWriterWord.Exceptions;
+using PhonoWriterWord.Managers;
 using PhonoWriterWord.Values;
 using System;
 using System.Windows.Controls;
@@ -14,10 +19,15 @@ namespace PhonoWriterWord
     public partial class PWwpf : UserControl
     {
         public DatabaseController dbc;
+        public LanguagesManager lm;
+        private ThisAddIn _app;
+
         public PWwpf()
         {
             InitializeComponent();
             this.dbc = dbc;
+            this.lm = lm;
+            this._app = _app;
         }
 
         private void 
@@ -50,8 +60,8 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine(item);
                 var ic = new ImagesController(dbc);
                 var wc = new WordsController(dbc);
-                var fr = new Database.Models.Language(1, "fr");
-                var wordObj = wc.ResearchByText(fr, item.Content.ToString());
+                var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;
+                var wordObj = wc.ResearchByText(language, item.Content.ToString());
                 String path="";
                 pictureBox.Source = null;
                 if (wordObj != null)
@@ -90,6 +100,15 @@ namespace PhonoWriterWord
             {
                 myList.Items.Add("uwu");
             }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, EventArgs e)
+        {
+            var selection = sender as ComboBox;
+            // selection.Text doesn't work properly
+            string selectedItem = selection.SelectedItem.ToString();
+            // a bit hacky, but at least this sends the language that user clicks on..
+            ThisAddIn.LanguageChanged(selectedItem.Replace("System.Windows.Controls.ComboBoxItem: ", ""));
         }
     }
 }

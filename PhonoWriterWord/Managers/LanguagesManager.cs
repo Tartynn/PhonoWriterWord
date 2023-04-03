@@ -46,18 +46,24 @@ namespace PhonoWriterWord.Managers
                 if (value == _language)
                     return;
                 _language = value;
-                _log.Info("Dictionary : {0} [{1} words]", _language.Label, _language.Words.Count);
+                //_log.Info("Dictionary : {0} [{1} words]", _language.Label, _language.Words.Count);
 
                 words.Clear();
                 images.Clear();
                 int i = 0;
                 foreach (var w in _language.Words)
                 {
-                    words.Add(w.Text.ToLower(), i);
-                    images.Add(i, w.Image);
-                    i++;
+                    // try-catch needed to prevent crash
+                    try
+                    {
+                        words.Add(w.Text.ToLower(), i);
+                        images.Add(i, w.Image);
+                        i++;
+                    } catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Exception in get CurrentLanguage " + ex.Message);
+                    }
                 }
-
                 DictionaryChanged?.Invoke(this, null);
             }
         }
@@ -86,8 +92,13 @@ namespace PhonoWriterWord.Managers
         public void Initialize()
         {
             // Check if dictionaries exist, otherwise, shutdown and ask for reinstall.
-            System.Diagnostics.Debug.WriteLine("_app : " + _app.Name);
-            System.Diagnostics.Debug.WriteLine("_app : " + _app.DatabaseController);
+            //System.Diagnostics.Debug.WriteLine("_app : " + _app.Name);
+            //System.Diagnostics.Debug.WriteLine("_app : " + _app.DatabaseController);
+            if (_app == null)
+            {
+                System.Diagnostics.Debug.WriteLine("app is null in LanguagesManager.Initialize");
+                return;
+            }
             _languages = _app.DatabaseController.LanguagesController.ResearchAllLanguages();
             if (_languages == null)
             {
@@ -97,7 +108,8 @@ namespace PhonoWriterWord.Managers
                 return;
             }
 
-            CurrentLanguage = _languages[2]; //_app.Configuration.Language - 1];
+            CurrentLanguage = _languages[0]; //_app.Configuration.Language - 1];
+            System.Diagnostics.Debug.WriteLine("LanguagesManager initialized, currentLanguage = " + CurrentLanguage.Label);
         }
 
         #endregion

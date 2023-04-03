@@ -29,7 +29,7 @@ namespace PhonoWriterWord.Database
         {
             _databaseService = databaseService;
             DefinitionsController = new DefinitionsController(this);
-            //LanguagesController = new LanguagesController(this);
+            LanguagesController = new LanguagesController(this);
             ImagesController = new ImagesController(this);
             PairsController = new PairsController(this);
             WordsController = new WordsController(this);

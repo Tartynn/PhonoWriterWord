@@ -1,6 +1,7 @@
 ﻿using PhonoWriterWord.Algorithms;
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Enumerations;
+using PhonoWriterWord.Managers;
 using PhonoWriterWord.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -33,11 +34,12 @@ namespace PhonoWriterWord.Predictions.Predictors
 
 
 			int numberOfPredictions = 9;// _app.Configuration.FuzzyPredictionNumber;
-			var fr = new Database.Models.Language(1, "fr");
-			var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words;
+			//var fr = new Database.Models.Language(1, "fr");
+			//var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words;
+			var words = Globals.ThisAddIn.LanguagesManager.CurrentLanguage.Words;
 
-			// Threading stuff
-			int THREADS = Environment.ProcessorCount / 2;                                           // Let's use half of the available CPUs.
+            // Threading stuff
+            int THREADS = Environment.ProcessorCount / 2;                                           // Let's use half of the available CPUs.
 			int range = words.Count / THREADS;                                                      // Number of words analyzed by thread.
 			ConcurrentDictionary<Word, int> wordsByValue = new ConcurrentDictionary<Word, int>();   // Lists of WordValues for each thread.
 

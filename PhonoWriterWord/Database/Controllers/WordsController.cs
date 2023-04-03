@@ -183,6 +183,7 @@ namespace PhonoWriterWord.Database.Controllers
                 //Construct the objects from the DataTable
                 List<Word> words = new List<Word>();
                 Word word = null;
+                System.Diagnostics.Debug.WriteLine("DATA ROWS" + dt.Rows.Count);
                 for (Int32 i = 0; i < dt.Rows.Count; i++)
                 {
                     DataRow dr = dt.Rows[i];
