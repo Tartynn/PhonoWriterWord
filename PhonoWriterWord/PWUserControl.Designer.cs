@@ -29,24 +29,12 @@ namespace PhonoWriterWord
         /// </summary>
         private void InitializeComponent()
         {
-            this.Title = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // Title
-            // 
-            this.Title.AutoSize = true;
-            this.Title.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.Title.Location = new System.Drawing.Point(82, 63);
-            this.Title.Name = "Title";
-            this.Title.Size = new System.Drawing.Size(153, 29);
-            this.Title.TabIndex = 0;
-            this.Title.Text = "PhonoWriter";
-            // 
+
             // PWUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.Title);
             this.Name = "PWUserControl";
             this.Size = new System.Drawing.Size(302, 469);
             this.ResumeLayout(false);
@@ -55,8 +43,5 @@ namespace PhonoWriterWord
         }
 
         #endregion
-
-        private System.Windows.Forms.Label Title;
-        //private System.Windows.Forms.Button button2;
     }
 }
