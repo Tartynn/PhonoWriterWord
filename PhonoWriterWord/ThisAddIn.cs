@@ -187,11 +187,11 @@ namespace PhonoWriterWord
 
         }
 
-        private void RegisterTextProviders()
-        {
-            //TextProvidersManager.RegisterProvider(WordTextProvider);
-            //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
-        }
+        //private void RegisterTextProviders()
+        //{
+        //    //TextProvidersManager.RegisterProvider(WordTextProvider);
+        //    //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
+        //}
 
         //private void PredictionsManager_PredictionFound(object sender, PredictionsFoundArgs e)
         //{
@@ -315,7 +315,7 @@ namespace PhonoWriterWord
             var defaultParallelOptions = new ParallelOptions();
             var words = pc.Work(word, defaultParallelOptions);
             var words1 = pf.Work(word, defaultParallelOptions);
-            var words2 = pr.Work(word, defaultParallelOptions);
+            //var words2 = pr.Work(word, defaultParallelOptions);
 
 
 
@@ -330,10 +330,10 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine(img.FileName);
             }*/
 
-     //       foreach (var w in words)
-     //       {
-     //           lw.Items.Add(w.Prediction);
-     //       }
+            foreach (var w in words)
+            {
+                lw.Items.Add(w.Prediction);
+            }
 
             foreach (var w in words1)
             {

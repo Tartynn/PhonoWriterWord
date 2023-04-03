@@ -10,14 +10,14 @@
         <ListView Margin="0,69,0,0" Name="myList" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194" Height="200">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    
-                    <EventSetter Event="Selected" Handler="ListViewItem_Selected"/>
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="
+                                 Item_PreviewMouseLeftButtonDown" />
                     <EventSetter Event="KeyDown"  Handler="ListViewItem_EnterPressed"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
         <Image Name ="pictureBox"  HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100" Margin="74,274,0,0"/>
-        <ComboBox Name = "languagesBox" Margin="0,482,450,0" RenderTransformOrigin = "0,0" HorizontalAlignment = "Right" Width = "130" Height = "25" VerticalAlignment = "Top" SelectionChanged="ComboBox_SelectionChanged">
+        <ComboBox  Name = "languagesBox" HorizontalAlignment="Left" Margin="74,289,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBox_SelectionChanged">
             <ComboBoxItem IsSelected = "True" >Francais</ComboBoxItem >
             <ComboBoxItem >English</ComboBoxItem>
             <ComboBoxItem >Deutsch</ComboBoxItem>

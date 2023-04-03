@@ -30,7 +30,8 @@ namespace PhonoWriterWord
             this._app = _app;
         }
 
-        public void LoadImage(Database.Models.Language lan, String str)
+        private void
+            Item_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var item = sender as ListViewItem;
             if (item != null)
@@ -61,19 +62,19 @@ namespace PhonoWriterWord
                 var wc = new WordsController(dbc);
                 var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;
                 var wordObj = wc.ResearchByText(language, item.Content.ToString());
-                String path="";
+                String path = "";
                 pictureBox.Source = null;
                 if (wordObj != null)
                 {
                     var img = ic.ResearchByWord(wordObj);
-                    if (img!= null)
+                    if (img != null)
                     {
                         System.Diagnostics.Debug.WriteLine(img.FileName);
                         path = Constants.IMAGES + "\\" + img.FileName;
                         LoadImage(path);
                     }
                 }
-                
+
             }
         }
 
@@ -95,15 +96,9 @@ namespace PhonoWriterWord
             {
                 ThisAddIn.KeyReturnPressed(item);
             }
-        }
-
-        private void ListViewItem_Selected(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var item = sender as ListViewItem;
-            if (item != null)
+            if (e.Key == Key.Space)
             {
-                var fr = new Database.Models.Language(1, "fr");
-                LoadImage(fr, item.Content.ToString());
+                myList.Items.Add("uwu");
             }
         }
 
