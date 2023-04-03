@@ -96,6 +96,7 @@ namespace PhonoWriterWord.Managers
             //System.Diagnostics.Debug.WriteLine("_app : " + _app.DatabaseController);
             if (_app == null)
             {
+                System.Diagnostics.Debug.WriteLine("app is null in LanguagesManager.Initialize");
                 return;
             }
             _languages = _app.DatabaseController.LanguagesController.ResearchAllLanguages();
@@ -108,6 +109,7 @@ namespace PhonoWriterWord.Managers
             }
 
             CurrentLanguage = _languages[0]; //_app.Configuration.Language - 1];
+            System.Diagnostics.Debug.WriteLine("LanguagesManager initialized, currentLanguage = " + CurrentLanguage.Label);
         }
 
         #endregion

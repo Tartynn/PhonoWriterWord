@@ -20,6 +20,7 @@ using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Sources.Classes;
 
 namespace PhonoWriterWord
 
@@ -75,6 +76,7 @@ namespace PhonoWriterWord
         public DatabaseService DatabaseService { get; set; }
         public PredictionsService PredictionsService { get; protected set; }
         public object Configuration { get; internal set; }
+        public static object config { get; private set; }
 
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
@@ -105,6 +107,8 @@ namespace PhonoWriterWord
             CheckDatabase();
             CheckFolders();
             InitializeServices();
+            
+
 
             wpf.dbc = DatabaseController;
         }
@@ -124,6 +128,7 @@ namespace PhonoWriterWord
             //    SpyService = new SpyServiceWin11();
 
             // Start managers and services.
+            System.Diagnostics.Debug.WriteLine("Initializing services");
             LanguagesManager.Initialize();
             PredictionsManager.Initialize();
             TextProvidersManager.Initialize();
@@ -333,8 +338,9 @@ namespace PhonoWriterWord
         {
             // Here ass well lm has to be initialized (i think) and tbh makes no sense
             // Also this seems to select the previous selected language from the dropdown - not the biggest issue atm though
-            var lm = new LanguagesManager();
-            lm.Initialize();
+            //var lm = new LanguagesManager();
+            //lm.Initialize();
+            var lm = Globals.ThisAddIn.LanguagesManager;
             Database.Models.Language dml = new Database.Models.Language();
 
             if (selectedLanguage == "Francais")
@@ -368,7 +374,9 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
             }
 
-            
+            //System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
+
+
             // Ignore these
 
             //Database.Models.Language language = lm.CurrentLanguage;

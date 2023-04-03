@@ -60,17 +60,8 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine(item);
                 var ic = new ImagesController(dbc);
                 var wc = new WordsController(dbc);
-                // below the only way atm when it doesn't crash when list item clicked
-                var fr = new Database.Models.Language(1, "fr");
-
-                // _app is null => crash
-                //var language = _app.LanguagesManager.CurrentLanguage;
-
-                // most promising, but LanguagesManager is null if not initialized first
-                // but LanguagesManager.Initialize() returns hardcoded language ("CurrentLanguage = _languages[0]; //_app.Configuration.Language - 1];" on line 109 @LanguagesManager)
-                //var lang = new Database.Models.Language(lm.CurrentLanguage.Id, lm.CurrentLanguage.Iso);
-                //System.Diagnostics.Debug.WriteLine("Current language in listview " + language.Id + language.Iso);
-                var wordObj = wc.ResearchByText(fr, item.Content.ToString());
+                var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;
+                var wordObj = wc.ResearchByText(language, item.Content.ToString());
                 String path="";
                 pictureBox.Source = null;
                 if (wordObj != null)
