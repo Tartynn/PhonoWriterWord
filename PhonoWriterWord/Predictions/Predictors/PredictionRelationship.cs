@@ -1,4 +1,5 @@
-﻿using PhonoWriterWord.Database.Models;
+﻿using PhonoWriterWord.Database;
+using PhonoWriterWord.Database.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +22,20 @@ namespace PhonoWriterWord.Predictions.Predictors
 			if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
-			Word word = _app.LanguagesManager.CurrentLanguage.Words.Find(m => m.Text.ToLower() == input.ToLower());
+			var fr = new Database.Models.Language(1, "fr");
+			Word word = fr.Words.Find(m => m.Text.ToLower() == input.ToLower());//_app.LanguagesManager.CurrentLanguage.Words.Find(m => m.Text.ToLower() == input.ToLower());
 			if (word == null)
 				return results;
 
 			List<Pair> pairs;
-			pairs = _app.DatabaseController.PairsController.ResearchByFirstWord(word);
+			var dbC = ThisAddIn.Current.DatabaseController; // call the DatabaseController variable instantiated by the current session of the Add-Ins
+			pairs = dbC.PairsController.ResearchByFirstWord(word);
+			System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - Predic Relationship");
 			pairs = pairs.OrderByDescending(o => o.Occurrence).Take(10).ToList();
 
 			foreach (Pair pair in pairs)
 			{
+				
 				Word w = _app.DatabaseController.WordsController.Research(pair.NextWord);
 				PredictionValue pv = new PredictionValue()
 				{

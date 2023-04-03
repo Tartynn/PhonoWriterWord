@@ -24,9 +24,9 @@ namespace PhonoWriterWord.Managers
         private List<Prediction> _predictions;
         private PredictionClassic _predictionClassic;
         private PredictionAlternative _predictionAlternative;
-        //private PredictionFuzzy _predictionFuzzy;
+        private PredictionFuzzy _predictionFuzzy;
         //private PredictionPhonetic _predictionPhonetic;
-        //private PredictionRelationship _predictionRelationship;
+        private PredictionRelationship _predictionRelationship;
 
         public enum PredictionsEnum
         {
@@ -188,9 +188,9 @@ namespace PhonoWriterWord.Managers
             {
                 case PredictionsEnum.Classic: prediction = _predictionClassic; break;
                 case PredictionsEnum.Alternative: prediction = _predictionAlternative; break;
-                //case PredictionsEnum.Fuzzy: prediction = _predictionFuzzy; break;
+                case PredictionsEnum.Fuzzy: prediction = _predictionFuzzy; break;
                 //case PredictionsEnum.Phonetic: prediction = _predictionPhonetic; break;
-                //case PredictionsEnum.Relationship: prediction = _predictionRelationship; break;
+                case PredictionsEnum.Relationship: prediction = _predictionRelationship; break;
             }
 
             return prediction;
@@ -201,17 +201,18 @@ namespace PhonoWriterWord.Managers
             // Initialize prediction systems.
             _predictionClassic = new PredictionClassic();
             _predictionAlternative = new PredictionAlternative();
-            //_predictionFuzzy = new PredictionFuzzy();
+            _predictionFuzzy = new PredictionFuzzy();
             //_predictionPhonetic = new PredictionPhonetic();
-            //_predictionRelationship = new PredictionRelationship();
+            _predictionRelationship = new PredictionRelationship();
 
             _predictions.Clear();
 
             _predictions.Add(_predictionClassic);
             _predictions.Add(_predictionAlternative);
-            //_predictions.Add(_predictionFuzzy);
+            _predictions.Add(_predictionFuzzy);
             //if (_app.Configuration.PhoneticPredictionActivated && _app.EnginesManager.HasEngines && _predictionPhonetic != null)
-            //    _predictions.Add(_predictionPhonetic);
+            //_predictions.Add(_predictionPhonetic);
+            _predictions.Add(_predictionRelationship);
         }
 
         public void Request(string input)
@@ -253,15 +254,15 @@ namespace PhonoWriterWord.Managers
             });
         }
 
-        //public void RequestRelationshipsAsync(string input)
-        //{
-        //    Request(new List<Prediction>() { _predictionRelationship }, input);
-        //}
+        public void RequestRelationshipsAsync(string input)
+        {
+            Request(new List<Prediction>() { _predictionRelationship }, input);
+        }
 
-        //public List<PredictionValue> RequestRelationships(string input)
-        //{
-        //    return _app.PredictionsService.Request(new List<Prediction>() { _predictionRelationship }, input);
-        //}
+        public List<PredictionValue> RequestRelationships(string input)
+        {
+            return _app.PredictionsService.Request(new List<Prediction>() { _predictionRelationship }, input);
+        }
 
         #endregion
     }

@@ -1,9 +1,5 @@
-﻿using Icare.PhonoWriter.Client.Classes;
+﻿using PhonoWriterWord.Sources.Classes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhonoWriterWord.Managers
 {
@@ -47,7 +43,7 @@ namespace PhonoWriterWord.Managers
 
 		public void Apply(string input, string prediction)
 		{
-			_currentProvider.Apply(input, prediction);
+			_currentProvider.Apply(input, prediction); // _app.Application.ActiveDocument : added for Word's Add-Ins (modification of ITextProvider)
 		}
 
 		public void Initialize()

@@ -196,8 +196,8 @@ namespace PhonoWriterWord.Predictions
                                   language,
                                   classicPredictions,
                                   fuzzyPredictions,
-                                  phoneticPredictions,
-                                  0
+                                  phoneticPredictions, // maybe replace it by '0,' as long as it's not implemented ?
+                                  relationshipPredictions // was 0 in the source code where relationshipPrediction wasn't implemented
                               ).Predictions
                           );
 

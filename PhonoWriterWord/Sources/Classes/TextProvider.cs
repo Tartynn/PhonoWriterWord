@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Word;
+using System;
 
-namespace Icare.PhonoWriter.Client.Classes
+namespace PhonoWriterWord.Sources.Classes
 {
 	// Enums
 	public enum FetchTypeEnum
@@ -13,13 +14,18 @@ namespace Icare.PhonoWriter.Client.Classes
 
 	public interface ITextProvider
 	{
-		event EventHandler<TextFoundArgs> TextFound;				// Occures when a text has been found.
-		event EventHandler<SeparatorFoundArgs> SeparatorFound;		// Occures when a separator has been found.
-        event EventHandler PunctuationFound;						// Occures when a punctuation has been found.
+        event EventHandler<TextFoundArgs> TextFound;                // Occures when a text has been found.
+        event EventHandler<SeparatorFoundArgs> SeparatorFound;		// Occures when a separator has been found.
+        event EventHandler PunctuationFound;                        // Occures when a punctuation has been found.
 
-		void Apply(string input, string prediction);
+        //Adaptation to work with Word's Add-Ins
+        //void Apply(Document document, string input, string prediction);
+        //string GetPreviousWord(Document document);
+
+        // OLD CODE
+        void Apply(string input, string prediction);
         string GetPreviousWord();
-	}
+    }
 
 	public class TextFoundArgs : EventArgs
 	{

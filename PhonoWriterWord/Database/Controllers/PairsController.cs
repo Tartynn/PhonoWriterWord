@@ -55,8 +55,8 @@ namespace PhonoWriterWord.Database.Controllers
             return (List<Pair>)DatabaseController.DoCommand((command) =>
             {
                 SQLiteParameter paramCurrentWord = new SQLiteParameter("currentWord", word.Id);
-
-                //paramCurrentWord.Value = word.Id;
+                System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - PairsController - 58");
+                paramCurrentWord.Value = word.Id;
 
                 command.CommandText = researchByFirstWordQuery;
                 command.Parameters.Add(paramCurrentWord);
@@ -65,10 +65,12 @@ namespace PhonoWriterWord.Database.Controllers
                 using (var reader = command.ExecuteReader())
                 {
                     dt.Load(reader);
+                    System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - PairsController - check dt + reader : " + reader);
                     reader.Close();
                 }
 
                 List<Pair> pairs = new List<Pair>();
+                
                 Pair pair = null;
                 for (Int32 i = 0; i < dt.Rows.Count; i++)
                 {
@@ -83,7 +85,7 @@ namespace PhonoWriterWord.Database.Controllers
 
                     pairs.Add(pair);
                 }
-
+                System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - PairsController - check dt + reader : " + pair.ToString());
                 return pairs;
             });
         }

@@ -4,12 +4,12 @@ using Word = Microsoft.Office.Interop.Word;
 using Microsoft.Office.Interop.Word;
 using PhonoWriterWord.Database;
 using PhonoWriterWord.Managers;
-using PhonoWriterWord.Predictions;
+using PhonoWriterWord.Predictions; //used for tests purpose (when we call public Prediction instead of Manager/Controller/Service
 using PhonoWriterWord.Services.Log;
 using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
-using Icare.PhonoWriter.Client.Classes;
+using PhonoWriterWord.Sources.Classes;
 using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -18,7 +18,7 @@ using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
-
+using System.Linq;
 
 namespace PhonoWriterWord
 
@@ -45,7 +45,8 @@ namespace PhonoWriterWord
 
 
         // Variables
-        private bool _predictionIsSelected;     // Flag to know if a prediction has been selected in the predictions window.
+        private bool _demo = true;
+        private bool _predictionSelected;     // Flag to know if a prediction has been selected in the predictions window.
         private string _previousInput;
         private string _context;
         private string _currentInput;
@@ -64,9 +65,11 @@ namespace PhonoWriterWord
         // Managers
         public LanguagesManager LanguagesManager { get; private set; }
         //public SpeechEnginesManager SpeechEnginesManager { get; private set; }
-        public PredictionsProvidersManager PredictionsProvidersManager { get; private set; }
+        //public PredictionsProvidersManager PredictionsProvidersManager { get; private set; }
         public TextProvidersManager TextProvidersManager { get; private set; }
         public PredictionsManager PredictionsManager { get; private set; }
+
+        //public WordTextProvider WordTextProvider { get; private set; }
 
 
         // Services
@@ -78,8 +81,9 @@ namespace PhonoWriterWord
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
 
-        public Prediction pc = new PredictionClassic();
-        public Prediction pf = new PredictionFuzzy();
+        //public Prediction pc = new PredictionClassic();
+        //public Prediction pf = new PredictionFuzzy();
+        public Prediction pr = new PredictionRelationship();
         #endregion
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
@@ -90,7 +94,7 @@ namespace PhonoWriterWord
             eh = new ElementHost { Child = wpf };
             usr.Controls.Add(eh);
             eh.Dock = DockStyle.Fill;
-            this.Application.DocumentBeforeSave += new Word.ApplicationEvents4_DocumentBeforeSaveEventHandler(Application_DocumentBeforeSave);
+            //this.Application.DocumentBeforeSave += new Word.ApplicationEvents4_DocumentBeforeSaveEventHandler(Application_DocumentBeforeSave);
             System.Diagnostics.Debug.WriteLine("Hello World");
             myCustomTaskPane = this.CustomTaskPanes.Add(usr, "My Task Pane");
             myCustomTaskPane.Visible = true;
@@ -105,6 +109,12 @@ namespace PhonoWriterWord
             CheckFolders();
             InitializeServices();
 
+            // TESTS ========================================
+            RegisterTextProviders();
+            //PredictionsManager.PredictionsFound += PredictionsManager_PredictionFound;
+            TextProvidersManager.TextFound += TextProvidersManager_TextFound;
+            // ==============================================
+
             wpf.dbc = DatabaseController;
         }
 
@@ -112,11 +122,13 @@ namespace PhonoWriterWord
         {
             // Load managers and services.
             DatabaseService = new DatabaseService(Constants.DATABASE_FILE);
+            DatabaseController = new DatabaseController(DatabaseService);
             LanguagesManager = new LanguagesManager();
             //EnginesManager = new EnginesManager();
             TextProvidersManager = new TextProvidersManager();
+            //PredictionsProvidersManager = new PredictionsProvidersManager();
             PredictionsManager = new PredictionsManager();
-            DatabaseController = new DatabaseController(DatabaseService);
+            
             PredictionsService = new PredictionsService();
             //SpyService = new SpyService();
             //if (IsWindows11())
@@ -175,24 +187,83 @@ namespace PhonoWriterWord
 
         }
 
-        //private async Task InitializeServices()
-        //{
-        //    await Task.Run(() =>
-        //    {
-        //        // Load managers and services.
-        //        DatabaseService = new DatabaseService(Constants.DATABASE_FILE); //Constants.DATABASE_FILE, LogService
-        //        DatabaseController = new DatabaseController(DatabaseService);
-        //        LanguagesManager = new LanguagesManager();
-        //        //SpeechEnginesManager = new SpeechEnginesManager();
-        //        //TextProvidersManager = new TextProvidersManager();
-        //        PredictionsProvidersManager = new PredictionsProvidersManager();
-        //        PredictionsService = new PredictionsService();
+        private void RegisterTextProviders()
+        {
+            //TextProvidersManager.RegisterProvider(WordTextProvider);
+            //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
+        }
 
-        //        // Start managers and services.
-        //        //InitializeSpyService();
-        //        LanguagesManager.Initialize();
-        //        //PredictionsProvidersManager.AddProvider("localhost", new LocalProvider(PredictionsService));
-        //    });
+        //private void PredictionsManager_PredictionFound(object sender, PredictionsFoundArgs e)
+        //{
+        //    _predictionSelected = false;
+
+        //    if (e.Input != _currentInput)
+        //        return;
+
+
+        //    //
+        //    // Prepare predictions.
+        //    //
+
+
+        //    // Filter predictions.
+        //    _predictions = PredictionsManager.Filter(e.Predictions, e.Input);
+
+        //    // Code below commented until Configuration.PictographicHidePictureless is created
+        //    //// Hide pictureless words if necessary.
+        //    //if (Configuration.PictographicHidePictureless)
+        //    //{
+        //    //    var retained = new List<string>();
+        //    //    var words = LanguagesManager.GetLanguage((LanguagesEnum)Configuration.InterfaceLanguage).Words;
+
+        //    //    for (int i = 0; i < _predictions.Count; i++)
+        //    //    {
+        //    //        // Bypass if word exist and has no image or doesn't exist.
+        //    //        var results = words.Where(w => w.Text == _predictions[i]);
+        //    //        if (results.Any() && results.First().Image > 0)
+        //    //            retained.Add(_predictions[i]);
+        //    //    }
+
+        //    //    _predictions = retained;
+        //    //}
+
+        //    // Add predictive following word if possible.
+        //    int max = 7; // Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber;
+        //    int nexts = max - _predictions.Count; // (INSTEAD OF 'max') : Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber 
+
+        //    if (!_demo)
+        //    {
+        //        string previousWord = TextProvidersManager.CurrentProvider.GetPreviousWord().ToLower();
+        //        var nextWords = PredictionsManager.RequestRelationships(previousWord).OrderByDescending(o => o.Value).Where(w => w.Prediction.StartsWith(e.Input)).Take(nexts);
+        //        _predictions.InsertRange(0, nextWords.Select(s => s.Prediction).Take(nexts));
+
+        //        if (e.Input.Length > 0 && Configuration.Language == (int)LanguagesEnum.Francais)
+        //        {
+        //            var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).Take(9).Select(s => s.ToString().Substring(previousWord.Length + 1));
+        //            //var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).OrderBy(o => o.ToString().Length).Take(nexts - nextWords.Count()).Select(s => s.ToString().Substring(previousWord.Length + 1));
+        //            _predictions.InsertRange(0, suggestions); //_couples.Where(w => w.StartsWith(previousWord + " " + e.Input)).OrderBy(o => o.Length).Take(nexts - nextWords.Count()).Select(s => s.Substring(previousWord.Length + 1)));
+        //        }
+
+        //        _predictions.RemoveAll(m => m.Length == 0);
+        //        Console.WriteLine("PREVIOUS : '{0}'", previousWord);
+        //        // Restore the uppercase from input if necessary.
+        //        //if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]) || previousWord == string.Empty) <= error with previousWord empty, causing too much uppercase on wrong conditions
+        //        if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]))
+        //            _predictions = _predictions.Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1)).ToList();
+        //    }
+
+        //    //// Remove eszatts for swiss german if needed.
+        //    //if (Configuration.RemoveEszetts && Configuration.Language == (int)LanguagesEnum.Deutsch)
+        //    //    _predictions = _predictions.Select(s => s.Replace("ß", "ss")).ToList();
+
+        //    // Sort and regroup.
+        //    _predictions = _predictions.GroupBy(s => s).OrderByDescending(g => g.Count()).Select(g => g.Key).Take(max).ToList();
+
+
+        //    //
+        //    // Show predictions
+        //    //
+
         //}
 
         //====================================================================
@@ -221,9 +292,32 @@ namespace PhonoWriterWord
             ((System.Windows.Controls.Image)wpf.FindName("pictureBox")).Source = null;
             PredictionsManager.Request(word);
 
+            //=================================================================================
+            // Update pair.
+            //string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(document);
+            //var language = new Database.Models.Language(1, "fr");
+            //if (!string.IsNullOrWhiteSpace(previousInput))
+            //    PredictionsService.UpdatePair(language, previousInput, "Relationship"); // prediction instead of "Relationship"
+
+            //// Increment word's balancy if exists.
+            //var w1 = language.Words.Find(w => w.Text == "Relationship"); // prediction instead of "Relationship"
+            //if (w1 != null)
+            //{
+            //    w1.Occurrence++;
+            //    w1.IsUpdated = true;
+            //    language.Update(w1);
+            //}
+
+            //TextProvidersManager.Apply(_currentInput, "Relationship"); // prediction instead of "Relationship"
+
+            //=================================================================================
+
             var defaultParallelOptions = new ParallelOptions();
-            var words = pc.Work(word, defaultParallelOptions);
-            var words1 = pf.Work(word, defaultParallelOptions);
+            //var words = pc.Work(word, defaultParallelOptions);
+            //var words1 = pf.Work(word, defaultParallelOptions);
+            var words2 = pr.Work(word, defaultParallelOptions);
+
+
 
             /*var ic = new ImagesController(DatabaseController);
             var wc = new WordsController(DatabaseController);
@@ -241,18 +335,18 @@ namespace PhonoWriterWord
      //           lw.Items.Add(w.Prediction);
      //       }
 
-            foreach (var w in words1)
+            foreach (var w in words2)
             {
                 lw.Items.Add(w.Prediction);
             }
         }
 
             
-        void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
-        {
-            Doc.Paragraphs[1].Range.InsertParagraphBefore();
-            Doc.Paragraphs[1].Range.Text = "Saving code.";
-        }
+        //void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
+        //{
+        //    Doc.Paragraphs[1].Range.InsertParagraphBefore();
+        //    Doc.Paragraphs[1].Range.Text = "Saving code.";
+        //}
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
         }
@@ -311,7 +405,7 @@ namespace PhonoWriterWord
                     // Assume we have to wait 500ms so the phonetic prediction
                     // can run before we play the selected text.
                     // TODO : Increase if users complains.
-                    Thread.Sleep(500);
+                    //Thread.Sleep(500); //UNCOMMENT for Phonetic Prediction -- GAETAN
 
                     // Prevent playing the text too fast (can be annoying).
                     if (_currentInput != e.Text)
