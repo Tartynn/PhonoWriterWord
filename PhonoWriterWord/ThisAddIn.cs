@@ -21,6 +21,7 @@ using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Sources.Classes;
+using Timer = System.Windows.Forms.Timer;
 
 namespace PhonoWriterWord
 
@@ -28,7 +29,7 @@ namespace PhonoWriterWord
 
 {
     public partial class ThisAddIn
-    { 
+    {
 
         //user control
         public PWUserControl usr;
@@ -36,6 +37,9 @@ namespace PhonoWriterWord
         private Microsoft.Office.Tools.CustomTaskPane myCustomTaskPane;
         private ElementHost eh;
         private PWwpf wpf;
+
+        private Timer _timer;
+        private Word.Application _application;
 
         #region Variables
 
@@ -49,7 +53,7 @@ namespace PhonoWriterWord
         // Variables
         private bool _demo = true;
         private bool _predictionSelected;     // Flag to know if a prediction has been selected in the predictions window.
-        private string _previousInput;
+        private string _previousInput = "";
         private string _context;
         private string _currentInput;
         private string _selectedPrediction;     // Return selected prediction.
@@ -91,7 +95,6 @@ namespace PhonoWriterWord
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-
             usr = new PWUserControl();
             wpf = new PWwpf();
             eh = new ElementHost { Child = wpf };
@@ -102,7 +105,11 @@ namespace PhonoWriterWord
             myCustomTaskPane = this.CustomTaskPanes.Add(usr, "My Task Pane");
             myCustomTaskPane.Visible = true;
             myCustomTaskPane.Width = 400;
-            Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
+            //Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
+            // Globals.ThisAddIn.Application.DocumentOpen += new Word.ApplicationEvents4_DocumentOpenEventHandler(Application_DocumentOpen);
+
+
+            this.Application.DocumentChange += Application_DocumentChange;
 
             //App Contructor
             _predictions = new List<string>();
@@ -111,11 +118,121 @@ namespace PhonoWriterWord
             CheckDatabase();
             CheckFolders();
             InitializeServices();
-            
-
 
             wpf.dbc = DatabaseController;
+
+            _application = Globals.ThisAddIn.Application;
+
+            System.Diagnostics.Debug.WriteLine("Doc open");
+
         }
+
+        private void Application_DocumentChange()
+        {
+            _timer = new Timer();
+            _timer.Interval = 1000; // Adjust the interval based on your requirements
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            Word.Selection selection = _application.Selection;
+
+            if (selection == null)
+            {
+                return;
+            }
+            System.Diagnostics.Debug.WriteLine("Timer");
+
+            if (selection.StoryLength <1)
+            {
+                return;
+            }
+            string currentWord = GetCurrentWord(selection);
+            System.Diagnostics.Debug.WriteLine("--------------------Current------------------------------");
+
+            System.Diagnostics.Debug.WriteLine(currentWord);
+
+
+            if (!string.IsNullOrWhiteSpace(currentWord) && !_previousInput.Equals(currentWord))
+            {
+                GetSuggestions(currentWord);
+                Console.WriteLine($"Current word: {currentWord}");
+                Console.WriteLine("Suggestions:");
+                //foreach (string suggestion in )
+                //{
+                //    System.Diagnostics.Debug.WriteLine(suggestion);
+                //}
+            }
+            System.Diagnostics.Debug.WriteLine("-----------------------Previous---------------------------");
+
+            System.Diagnostics.Debug.WriteLine(_previousInput);
+            _previousInput = currentWord;
+        }
+
+        private string GetCurrentWord(Word.Selection selection)
+        
+        {
+            System.Diagnostics.Debug.WriteLine("Word");
+
+            int originalStart = selection.Start;
+            int originalEnd = selection.End;
+
+            Word.Range range = _application.ActiveDocument.Range(originalStart, originalEnd);
+
+            object unit = Word.WdUnits.wdWord;
+            object count = 1;
+
+            range.MoveStart(ref unit, -1);
+            range.MoveEnd(ref unit, 1);
+
+            // Restore the original selection
+            selection.SetRange(originalStart, originalEnd);
+
+            // Trim spaces and return the current word
+            string currentWord = range.Text?.Trim() ?? string.Empty;
+
+           // System.Diagnostics.Debug.WriteLine(currentWord);
+
+            return currentWord;
+        }
+
+        private void GetSuggestions(string input)
+        {
+            System.Diagnostics.Debug.WriteLine("Suggestionsss");
+
+            System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
+        lw.Items.Clear();
+
+            System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
+
+        System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
+        label.Content = input;
+            ((System.Windows.Controls.Image) wpf.FindName("pictureBox")).Source = null;
+            PredictionsManager.Request(input);
+
+            var defaultParallelOptions = new ParallelOptions();
+        var words = pc.Work(input, defaultParallelOptions);
+        var words1 = pf.Work(input, defaultParallelOptions);
+  
+            foreach (var w in words)
+            {
+                lw.Items.Add(w.Prediction);
+            }
+
+            foreach (var w in words1)
+            {
+                lw.Items.Add(w.Prediction);
+            }
+
+            if (lw.Items.Count > 0)
+            {
+                lw.SelectedIndex = 0;
+            }
+            }
+        
+
 
         private void InitializeServices()
         {
@@ -268,85 +385,85 @@ namespace PhonoWriterWord
 
         //====================================================================
 
-        private void Application_WindowSelectionChange(Word.Selection sel)
-        {
-            // the
-            //
-            //
-            //
-            // will contain the list of proposed words
-            System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
-            lw.Items.Clear();
+        //private void Application_WindowSelectionChange(Word.Selection sel)
+        //{
+        //    // the
+        //    //
+        //    //
+        //    //
+        //    // will contain the list of proposed words
+        //    System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
+        //   // lw.Items.Clear();
 
-            // the PictureBox will contain the picture related to the selected word
-            System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
+        //    // the PictureBox will contain the picture related to the selected word
+        //    System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
 
-            Word.Document document = this.Application.ActiveDocument;
-            //select the range of the word when the cursor is on it
-            Range selectionRange = document.ActiveWindow.Selection.Range;
-            selectionRange.Expand(WdUnits.wdWord);
-            string word = selectionRange.Text.Trim();
-            //assigning the value to our label
-            System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
-            label.Content = word;
-            ((System.Windows.Controls.Image)wpf.FindName("pictureBox")).Source = null;
-            PredictionsManager.Request(word);
+        //    Word.Document document = this.Application.ActiveDocument;
+        //    //select the range of the word when the cursor is on it
+        //    Range selectionRange = document.ActiveWindow.Selection.Range;
+        //    selectionRange.Expand(WdUnits.wdWord);
+        //    string word = selectionRange.Text.Trim();
+        //    //assigning the value to our label
+        //    System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
+        //    label.Content = word;
+        //    ((System.Windows.Controls.Image)wpf.FindName("pictureBox")).Source = null;
+        //    PredictionsManager.Request(word);
 
-            //=================================================================================
-            // Update pair.
-            //string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(document);
-            //var language = new Database.Models.Language(1, "fr");
-            //if (!string.IsNullOrWhiteSpace(previousInput))
-            //    PredictionsService.UpdatePair(language, previousInput, "Relationship"); // prediction instead of "Relationship"
+        //    //=================================================================================
+        //    // Update pair.
+        //    //string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(document);
+        //    //var language = new Database.Models.Language(1, "fr");
+        //    //if (!string.IsNullOrWhiteSpace(previousInput))
+        //    //    PredictionsService.UpdatePair(language, previousInput, "Relationship"); // prediction instead of "Relationship"
 
-            //// Increment word's balancy if exists.
-            //var w1 = language.Words.Find(w => w.Text == "Relationship"); // prediction instead of "Relationship"
-            //if (w1 != null)
-            //{
-            //    w1.Occurrence++;
-            //    w1.IsUpdated = true;
-            //    language.Update(w1);
-            //}
+        //    //// Increment word's balancy if exists.
+        //    //var w1 = language.Words.Find(w => w.Text == "Relationship"); // prediction instead of "Relationship"
+        //    //if (w1 != null)
+        //    //{
+        //    //    w1.Occurrence++;
+        //    //    w1.IsUpdated = true;
+        //    //    language.Update(w1);
+        //    //}
 
-            //TextProvidersManager.Apply(_currentInput, "Relationship"); // prediction instead of "Relationship"
+        //    //TextProvidersManager.Apply(_currentInput, "Relationship"); // prediction instead of "Relationship"
 
-            //=================================================================================
+        //    //=================================================================================
 
-            var defaultParallelOptions = new ParallelOptions();
-            var words = pc.Work(word, defaultParallelOptions);
-            var words1 = pf.Work(word, defaultParallelOptions);
-            //var words2 = pr.Work(word, defaultParallelOptions);
+        //    var defaultParallelOptions = new ParallelOptions();
+        //    var words = pc.Work(word, defaultParallelOptions);
+        //    var words1 = pf.Work(word, defaultParallelOptions);
+        //    //var words2 = pr.Work(word, defaultParallelOptions);
 
 
 
-            /*var ic = new ImagesController(DatabaseController);
-            var wc = new WordsController(DatabaseController);
-            var fr = new Database.Models.Language(1, "fr");
-            var wordObj = wc.ResearchByText(fr, word);
+        //    /*var ic = new ImagesController(DatabaseController);
+        //    var wc = new WordsController(DatabaseController);
+        //    var fr = new Database.Models.Language(1, "fr");
+        //    var wordObj = wc.ResearchByText(fr, word);
 
-            if (wordObj != null)
-            {
-                var img = ic.ResearchByWord(wordObj);
-                System.Diagnostics.Debug.WriteLine(img.FileName);
-            }*/
+        //    if (wordObj != null)
+        //    {
+        //        var img = ic.ResearchByWord(wordObj);
+        //        System.Diagnostics.Debug.WriteLine(img.FileName);
+        //    }*/
 
-            foreach (var w in words)
-            {
-                lw.Items.Add(w.Prediction);
-            }
+        //    foreach (var w in words)
+        //    {
+        //        lw.Items.Add(w.Prediction);
+        //    }
 
-            foreach (var w in words1)
-            {
-                lw.Items.Add(w.Prediction);
-            }
+        //    foreach (var w in words1)
+        //    {
+        //        lw.Items.Add(w.Prediction);
+        //    }
 
-            if (lw.Items.Count > 0)
-            {
-                lw.SelectedIndex = 0;
-                //wpf.LoadImage(new Database.Models.Language(1, "fr"),lw.SelectedItem.ToString());
-            }
+        //    if (lw.Items.Count > 0)
+        //    {
+        //        lw.SelectedIndex = 0;
+        //        //wpf.LoadImage(new Database.Models.Language(1, "fr"),lw.SelectedItem.ToString());
+        //    }
 
-        }
+        //}
 
             
         //void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
@@ -356,6 +473,11 @@ namespace PhonoWriterWord
         //}
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Dispose();
+            }
         }
 
         #region VSTO generated code
