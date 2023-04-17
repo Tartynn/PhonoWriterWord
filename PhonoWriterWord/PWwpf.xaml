@@ -24,5 +24,10 @@
             <ComboBoxItem >Italiano</ComboBoxItem>
             <ComboBoxItem >Spanish</ComboBoxItem>
         </ComboBox>
+        <Button Content="Classic on" Name="Button1" HorizontalAlignment="Left" Margin="49,425,0,0" VerticalAlignment="Top" Click="Button1_Click"/>
+        <Button Content="Fuzzy on" Name="Button2" HorizontalAlignment="Left" Margin="49,450,0,0" VerticalAlignment="Top" Click="Button2_Click"/>
+        <Button Content="Alternative on" Name="Button3" HorizontalAlignment="Left" Margin="49,498,0,0" VerticalAlignment="Top" Click="Button3_Click"/>
+        <Button Content="Relationship on" Name="Button4" HorizontalAlignment="Left" Margin="49,475,0,0" VerticalAlignment="Top" Click="Button4_Click"/>
+        <Button Content="Pictographic on" Name="Button5" HorizontalAlignment="Left" Margin="49,523,0,0" VerticalAlignment="Top" Click="Button5_Click"/>
     </Grid>
 </UserControl>

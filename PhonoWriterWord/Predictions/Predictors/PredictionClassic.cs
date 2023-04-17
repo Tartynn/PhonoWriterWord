@@ -1,4 +1,6 @@
 ﻿using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Managers;
+using PhonoWriterWord.Sources.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 {
 	class PredictionClassic : Prediction
 	{
+
 		public PredictionClassic()
 		{
 			_name = "Classic";
@@ -17,6 +20,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 		public override List<PredictionValue> Work(string input, ParallelOptions parallelOptions)
 		{
 			List<PredictionValue> results = new List<PredictionValue>();
+			PredictionConfig config = PredictionsConfigManager.Config;
 
             //if (!_app.Configuration.ClassicPredictionActivated)
             //    return results;
@@ -26,6 +30,9 @@ namespace PhonoWriterWord.Predictions.Predictors
 				return results;
 
 			if (parallelOptions.CancellationToken.IsCancellationRequested)
+				return results;
+
+			if (!config.PredictionClassicActive)
 				return results;
 
 			var numberOfPrediction = 9;//_app.Configuration.ClassicPredictionsNumber;

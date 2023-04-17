@@ -61,11 +61,24 @@ namespace PhonoWriterWord.Managers
         public void DisablePrediction(PredictionsEnum typeOfPrediction)
         {
             _predictions.Remove(GetPrediction(typeOfPrediction));
+
+            System.Diagnostics.Debug.WriteLine("Prediction disabled");
+            foreach (var p in _predictions)
+            {
+                System.Diagnostics.Debug.WriteLine(p.Name);
+            }
+
         }
 
         public void EnablePrediction(PredictionsEnum typeOfPrediction)
         {
             _predictions.Add(GetPrediction(typeOfPrediction));
+
+            System.Diagnostics.Debug.WriteLine("Prediction enabled");
+            foreach (var p in _predictions)
+            {
+                System.Diagnostics.Debug.WriteLine(p.Name);
+            }
         }
 
         /// <summary>

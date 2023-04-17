@@ -2,6 +2,7 @@
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Managers;
+using PhonoWriterWord.Sources.Classes;
 using PhonoWriterWord.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -23,14 +24,15 @@ namespace PhonoWriterWord.Predictions.Predictors
 		public override List<PredictionValue> Work(string input, ParallelOptions parallelOptions)
 		{
 			List<PredictionValue> results = new List<PredictionValue>();
+            PredictionConfig config = PredictionsConfigManager.Config;
 
 
-			if (parallelOptions.CancellationToken.IsCancellationRequested)
+            if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
 
-			//	if (!_app.Configuration.FuzzyPredictionActivated)
-				//	return results;
+			if (!config.PredictionFuzzyActive)
+				return results;
 
 
 			int numberOfPredictions = 9;// _app.Configuration.FuzzyPredictionNumber;

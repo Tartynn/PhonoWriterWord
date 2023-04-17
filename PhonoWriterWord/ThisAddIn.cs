@@ -36,7 +36,6 @@ namespace PhonoWriterWord
         private Microsoft.Office.Tools.CustomTaskPane myCustomTaskPane;
         private ElementHost eh;
         private PWwpf wpf;
-
         #region Variables
 
         // Instances

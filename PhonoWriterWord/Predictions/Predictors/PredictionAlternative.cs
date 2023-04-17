@@ -1,4 +1,6 @@
 ﻿using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Managers;
+using PhonoWriterWord.Sources.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +19,12 @@ namespace PhonoWriterWord.Predictions
 		public override List<PredictionValue> Work(string input, ParallelOptions parallelOptions)
 		{
 			List<PredictionValue> results = new List<PredictionValue>();
+            PredictionConfig config = PredictionsConfigManager.Config;
 
-			//if (!_app.Configuration.ClassicPredictionActivated)
-			//	return results;
+            if (!config.PredictionAlternativeActive)
+            	return results;
 
-			if (parallelOptions.CancellationToken.IsCancellationRequested)
+            if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
 			var numberOfPrediction = 1;//_app.Configuration.ClassicPredictionsNumber;
