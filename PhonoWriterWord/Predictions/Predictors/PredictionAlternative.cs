@@ -21,8 +21,8 @@ namespace PhonoWriterWord.Predictions
 			List<PredictionValue> results = new List<PredictionValue>();
             PredictionConfig config = PredictionsConfigManager.Config;
 
-            if (!config.PredictionAlternativeActive)
-            	return results;
+            //if (!config.PredictionAlternativeActive)
+            	//return results;
 
             if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;

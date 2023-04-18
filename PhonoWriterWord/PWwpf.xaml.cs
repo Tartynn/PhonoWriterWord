@@ -161,32 +161,13 @@ namespace PhonoWriterWord
             button3Clicked = !button3Clicked;
             if (button3Clicked)
             {
-                Button3.Content = "Alternative off";
-                //Globals.ThisAddIn.PredictionsManager.DisablePrediction(PredictionsManager.PredictionsEnum.Alternative);
-                config.PredictionAlternativeActive = false;
+                Button3.Content = "Phonetic off";
+                config.PredictionPhoneticActive = false;
             }
             else
             {
-                Button3.Content = "Alternative on";
-                //Globals.ThisAddIn.PredictionsManager.EnablePrediction(PredictionsManager.PredictionsEnum.Alternative);
-                config.PredictionAlternativeActive = true;
-            }
-        }
-
-        private void Button4_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            button4Clicked = !button4Clicked;
-            if (button4Clicked)
-            {
-                Button4.Content = "Relationship off";
-                //Globals.ThisAddIn.PredictionsManager.DisablePrediction(PredictionsManager.PredictionsEnum.Relationship);
-                config.PredictionRelationshipActive = false;
-            }
-            else
-            {
-                Button4.Content = "Relationship on";
-                //Globals.ThisAddIn.PredictionsManager.EnablePrediction(PredictionsManager.PredictionsEnum.Relationship);
-                config.PredictionRelationshipActive = true;
+                Button3.Content = "Phonetic on";
+                config.PredictionPhoneticActive = true;
             }
         }
 
@@ -203,6 +184,48 @@ namespace PhonoWriterWord
                 Button5.Content = "Pictographic on";
                 config.PictographicActive = true;
             }
+        }
+
+        private void SliderClassic_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionClassicAmount = value;
+        }
+
+        private void SliderFuzzy_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionFuzzyAmount = value;
+        }
+
+        private void SliderClassicChar_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionClassicChars = value;
+        }
+
+        private void SliderPhonetic_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionPhoneticAmount = value;
+        }
+
+        private void SliderPhoneticChar_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionPhoneticChars = value;
+        }
+
+        private void SliderPhoneticUntil_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = (Slider)sender;
+            int value = (int)slider.Value;
+            config.PredictionPhoneticUntil = value;
         }
     }
 }
