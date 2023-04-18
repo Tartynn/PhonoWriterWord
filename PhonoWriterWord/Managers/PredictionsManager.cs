@@ -2,6 +2,7 @@
 using PhonoWriterWord.Predictions;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Services.Log;
+using PhonoWriterWord.Sources.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,6 +109,8 @@ namespace PhonoWriterWord.Managers
             var language = _app.LanguagesManager.CurrentLanguage;
             List<Word> words = language.Words;
 
+            PredictionConfig config = PredictionsConfigManager.Config;
+
             // Transform prediction values to strings and separate "Alternative" prediction values
             List<Predictions.PredictionValue> alternatives = predictions.FindAll(pv => pv.Type == PredictionType.ALTERNATIVE);
             predictions.RemoveAll(pv => pv.Type == PredictionType.ALTERNATIVE);
@@ -147,7 +150,7 @@ namespace PhonoWriterWord.Managers
             sortedHigh.AddRange(sortedLow);
 
             // Don't show pictureless words if option is activated.
-            /*if (_configuration.PictographicHidePictureless)
+            if (config.HidePictureless)
             {
                 for (int i = 0; i < sortedHigh.Count; i++)
                 {
@@ -158,14 +161,14 @@ namespace PhonoWriterWord.Managers
                         i--;
                     }
                 }
-            }*/
+            }
 
 
             // Transform List<Word> to List<string>.
             predictionsStrings = sortedHigh.Select(s => s.Text).ToList();
 
             // Add inexistants if necessary.
-            //if (!_configuration.PictographicHidePictureless)
+            if (!config.HidePictureless)
             predictionsStrings.AddRange(inexistants);
 
             //// TODO : fix this

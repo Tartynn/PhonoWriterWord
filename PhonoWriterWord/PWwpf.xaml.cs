@@ -227,5 +227,22 @@ namespace PhonoWriterWord
             int value = (int)slider.Value;
             config.PredictionPhoneticUntil = value;
         }
+
+        private void Button4_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // This also needs PredictionsManager to work.
+
+            button4Clicked = !button4Clicked;
+            if (button4Clicked)
+            {
+                Button4.Content = "Enabled";
+                config.HidePictureless = true;
+            }
+            else
+            {
+                Button4.Content = "Disabled";
+                config.HidePictureless = false;
+            }
+        }
     }
 }

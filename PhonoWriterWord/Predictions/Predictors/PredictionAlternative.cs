@@ -21,13 +21,13 @@ namespace PhonoWriterWord.Predictions
 			List<PredictionValue> results = new List<PredictionValue>();
             PredictionConfig config = PredictionsConfigManager.Config;
 
-            //if (!config.PredictionAlternativeActive)
-            	//return results;
+            if (!config.PredictionClassicActive)
+            	return results;
 
             if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
-			var numberOfPrediction = 1;//_app.Configuration.ClassicPredictionsNumber;
+			var numberOfPrediction = config.PredictionClassicAmount;//_app.Configuration.ClassicPredictionsNumber;
 
 			//var fr = new Database.Models.Language(1, "fr");
 			var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;

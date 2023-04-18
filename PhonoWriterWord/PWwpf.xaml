@@ -54,10 +54,10 @@
             <TextBlock TextWrapping="Wrap" Text="{Binding Value, ElementName=FuzzySlider}" Margin="202,314,136,22"/>
             <Slider Margin="223,311,9,10" MaxWidth="130"  Value="5" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" ValueChanged="SliderFuzzy_ValueChanged" Name="FuzzySlider" />
 
-            <Label Content="Enable phonetic prediction:" Margin="48,346,146,20"/>
-
+            <Label Content="Enable picto. prediction:" Margin="48,346,146,20"/>
             <Button Content="Pictographic on" Name="Button5" HorizontalAlignment="Left" Margin="223,348,0,0" VerticalAlignment="Top" Click="Button5_Click" Height="20"/>
-
+            <Label Content="Hide pictureless words:" Margin="48,370,146,129"/>
+            <Button Content="Disabled" Name="Button4" HorizontalAlignment="Left" Margin="223,374,0,0" VerticalAlignment="Top" Click="Button4_Click" Height="20"/>
 
 
 
