@@ -2,6 +2,7 @@
 using PhonoWriterWord.Database.Models;
 using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Managers;
+using PhonoWriterWord.Sources.Classes;
 using PhonoWriterWord.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -23,20 +24,23 @@ namespace PhonoWriterWord.Predictions.Predictors
 		public override List<PredictionValue> Work(string input, ParallelOptions parallelOptions)
 		{
 			List<PredictionValue> results = new List<PredictionValue>();
+            PredictionConfig config = PredictionsConfigManager.Config;
 
 
-			if (parallelOptions.CancellationToken.IsCancellationRequested)
+            if (parallelOptions.CancellationToken.IsCancellationRequested)
 				return results;
 
 
-			//	if (!_app.Configuration.FuzzyPredictionActivated)
-				//	return results;
+			if (!config.PredictionFuzzyActive)
+				return results;
 
 
-			int numberOfPredictions = 9;// _app.Configuration.FuzzyPredictionNumber;
-			//var fr = new Database.Models.Language(1, "fr");
-			//var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words;
-			var words = Globals.ThisAddIn.LanguagesManager.CurrentLanguage.Words;
+			//int numberOfPredictions = 9;// _app.Configuration.FuzzyPredictionNumber;
+			int numberOfPredictions = config.PredictionFuzzyAmount;
+            System.Diagnostics.Debug.WriteLine("Amount of fuzzy predictions " + config.PredictionFuzzyAmount);
+            //var fr = new Database.Models.Language(1, "fr");
+            //var words = /*_app.LanguagesManager.CurrentLanguage*/fr.Words;
+            var words = Globals.ThisAddIn.LanguagesManager.CurrentLanguage.Words;
 
             // Threading stuff
             int THREADS = Environment.ProcessorCount / 2;                                           // Let's use half of the available CPUs.

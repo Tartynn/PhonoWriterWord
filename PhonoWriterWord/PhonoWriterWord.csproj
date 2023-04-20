@@ -250,6 +250,7 @@
     <Compile Include="Exceptions\NoConnectionAvailableException.cs" />
     <Compile Include="Exceptions\WordNotFoundException.cs" />
     <Compile Include="Managers\LanguagesManager.cs" />
+    <Compile Include="Managers\PredictionsConfigManager.cs" />
     <Compile Include="Managers\PredictionsManager.cs" />
     <Compile Include="Managers\TextProvidersManager.cs" />
     <Compile Include="Predictions\Predictors\Prediction.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sources\Classes\PredictionConfig.cs" />
     <Compile Include="Sources\Classes\Configuration.cs" />
     <Compile Include="Sources\Classes\TextProvider.cs" />
     <Compile Include="Sources\Predictions\PredictionRequest.cs" />
@@ -291,6 +293,7 @@
     <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_17_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_18_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_4_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
@@ -341,12 +344,12 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_18_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>5FB9AD8B9B356D5AD2731E0A436744355DD73D0F</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7A494B771132D5B3CFA43026A87E2A50D9B73AC1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
