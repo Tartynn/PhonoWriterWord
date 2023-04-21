@@ -223,7 +223,7 @@ namespace PhonoWriterWord.Managers
             Request(_predictions, input);
         }
 
-        public void Request(List<Prediction> predictions, string input)
+        public async Task Request(List<Prediction> predictions, string input)
         {
             if (input == null || string.IsNullOrWhiteSpace(input))
             {
@@ -240,12 +240,12 @@ namespace PhonoWriterWord.Managers
 
             // Launch request.
             // Pourquoi ça ne passe pas dans Task.Run ???? - Gaétan
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - [text : '{0}', lastInput : '{1}']", input, _lastInput);
 
-                Thread.Sleep(100);
-
+                //Thread.Sleep(100);
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request - Check variables values : 1. input = " + input + " - 2. _lastInput = " + _lastInput);
                 if (input != _lastInput) return; // Exit task if a new one has been called.
 
                 List<PredictionValue> results = _app.PredictionsService.Request(predictions, input);

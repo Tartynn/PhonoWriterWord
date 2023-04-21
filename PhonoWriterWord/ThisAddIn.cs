@@ -316,7 +316,7 @@ namespace PhonoWriterWord
             //    lw.SelectedIndex = 0;
             //}
 
-            
+            Thread.Sleep(100);
 
             System.Diagnostics.Debug.WriteLine("End of GetSuggestion - Start of displaying predictions - size : " +_predictions.Count());
 
