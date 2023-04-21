@@ -18,14 +18,14 @@ namespace PhonoWriterWord.Predictions
 		ALTERNATIVE
 	}
 
-	//public class PredictionValue
-	//{
-	//	public string Prediction;
-	//	public float Value;
-	//	public PredictionTypes Type;
-	//}
+    public class PredictionValue
+    {
+        public string Prediction;
+        public float Value;
+        public PredictionTypes Type;
+    }
 
-	class PredictionsRequest
+    class PredictionsRequest
 	{
 		#region Variables
 

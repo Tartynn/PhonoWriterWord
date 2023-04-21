@@ -45,7 +45,7 @@ namespace PhonoWriterWord.Predictions
 				PredictionValue pv = new PredictionValue();
 				pv.Prediction = word.Text;
 				pv.Value = word.Occurrence;
-				pv.Type = PredictionType.ALTERNATIVE;
+				pv.Type = PredictionTypes.ALTERNATIVE;
 				results.Add(pv);
 			}
 

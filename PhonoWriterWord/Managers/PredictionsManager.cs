@@ -1,4 +1,5 @@
 ﻿using PhonoWriterWord.Database.Models;
+using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Predictions;
 using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Services.Log;
@@ -39,6 +40,7 @@ namespace PhonoWriterWord.Managers
 
         // Events
         public event EventHandler<PredictionsFoundArgs> PredictionsFound;
+        public event EventHandler<string> PredictionSelected; // Originally comes from class "PredictionsWindow.xaml.cs" (in Stand alone app's source code)
 
         #endregion
 
@@ -96,8 +98,8 @@ namespace PhonoWriterWord.Managers
             List<Word> words = language.Words;
 
             // Transform prediction values to strings and separate "Alternative" prediction values
-            List<Predictions.PredictionValue> alternatives = predictions.FindAll(pv => pv.Type == PredictionType.ALTERNATIVE);
-            predictions.RemoveAll(pv => pv.Type == PredictionType.ALTERNATIVE);
+            List<Predictions.PredictionValue> alternatives = predictions.FindAll(pv => pv.Type == PredictionTypes.ALTERNATIVE);
+            predictions.RemoveAll(pv => pv.Type == PredictionTypes.ALTERNATIVE);
             List<string> predictionsStrings = predictions.Select(s => s.Prediction).Distinct().ToList();
 
             // Regroup by occurencies (high = > 1 occurences, low = 1 occurency).
@@ -157,9 +159,9 @@ namespace PhonoWriterWord.Managers
 
             //// TODO : fix this
             //// Prevent overflow of predictions (rare bug) until it's fixed.
-            //int max = _app.Configuration.ClassicPredictionsNumber + _app.Configuration.PhoneticPredictionNumber + _app.Configuration.FuzzyPredictionNumber;
-            //if (predictionsStrings.Count > max)
-            //    predictionsStrings.RemoveRange(max, predictionsStrings.Count - max);
+            int max = 9; //_app.Configuration.ClassicPredictionsNumber + _app.Configuration.PhoneticPredictionNumber + _app.Configuration.FuzzyPredictionNumber;
+            if (predictionsStrings.Count > max)
+                predictionsStrings.RemoveRange(max, predictionsStrings.Count - max);
 
             //// Put the most similar hashed word on top.
             //var inputHash = Algorithms.Splitter(input, (LanguagesEnum)_app.Configuration.Language);
@@ -217,7 +219,7 @@ namespace PhonoWriterWord.Managers
 
         public void Request(string input)
         {
-            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with input");
+            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with input : " +input);
             Request(_predictions, input);
         }
 
@@ -232,25 +234,31 @@ namespace PhonoWriterWord.Managers
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with List predi + input");
+            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with List predi + input : " +predictions.Count() + " "+input);
 
             _lastInput = input;
 
             // Launch request.
-
+            // Pourquoi ça ne passe pas dans Task.Run ???? - Gaétan
             Task.Run(() =>
             {
-                //_log.Debug("TextProviderManager_TextFound [text : '{0}', lastInput : '{1}']", input, _lastInput);
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - [text : '{0}', lastInput : '{1}']", input, _lastInput);
 
                 Thread.Sleep(100);
 
                 if (input != _lastInput) return; // Exit task if a new one has been called.
 
                 List<PredictionValue> results = _app.PredictionsService.Request(predictions, input);
-                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request sent with predictions + input");
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs TASK.RUN - Request sent with predictions + input : " +predictions.Count() + ", "+input);
 
                 PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, results));
-                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - END of request");
+                System.Diagnostics.Debug.WriteLine("PredictionsManager.cs TASK.RUN - END of request : " + results.Count());
+
+                //foreach (var w in results)
+                //{
+                //    System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - PREDICTIONS : " + w.Value + " : " + w.ToString());
+                //}
+
             });
         }
 

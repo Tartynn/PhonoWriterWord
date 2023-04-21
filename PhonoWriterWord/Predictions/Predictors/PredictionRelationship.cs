@@ -30,7 +30,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 			List<Pair> pairs;
 			var dbC = ThisAddIn.Current.DatabaseController; // call the DatabaseController variable instantiated by the current session of the Add-Ins
 			pairs = dbC.PairsController.ResearchByFirstWord(word);
-			System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - Predic Relationship");
+			System.Diagnostics.Debug.WriteLine("HERE WE AAAAAAAARRRRRREEEEEEEEEEEE - Predic Relationship - input : " +input);
 			pairs = pairs.OrderByDescending(o => o.Occurrence).Take(10).ToList();
 
 			foreach (Pair pair in pairs)
@@ -41,9 +41,14 @@ namespace PhonoWriterWord.Predictions.Predictors
 				{
 					Prediction = w.Text,
 					Value = w.Occurrence,
-					Type = PredictionType.RELATIONSHIP
+					Type = PredictionTypes.RELATIONSHIP
 				};
 				results.Add(pv);
+			}
+
+			foreach(var r in results)
+            {
+				System.Diagnostics.Debug.WriteLine("From PredictionRelationship.cs, line 51 - results : " + r);
 			}
 
 			return results;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IEnumerableTrie.Simple;
 using Word = Microsoft.Office.Interop.Word;
 using Microsoft.Office.Interop.Word;
 using PhonoWriterWord.Database;
@@ -20,8 +21,10 @@ using PhonoWriterWord.Predictions.Predictors;
 using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Database.Models;
-using PhonoWriterWord.Sources.Classes;
 using Timer = System.Windows.Forms.Timer;
+//using PredictionsFoundArgs = PhonoWriterWord.Managers.PredictionsFoundArgs;
+using System.Linq;
+using System.Reflection;
 
 namespace PhonoWriterWord
 
@@ -30,7 +33,7 @@ namespace PhonoWriterWord
 {
     public partial class ThisAddIn
     {
-
+        #region Variables
         //user control
         public PWUserControl usr;
         // Custom task pane
@@ -41,8 +44,6 @@ namespace PhonoWriterWord
         private Timer _timer;
         private Word.Application _application;
 
-        #region Variables
-
         // Instances
         private Log _log;
 
@@ -51,7 +52,7 @@ namespace PhonoWriterWord
 
 
         // Variables
-        private bool _demo = true;
+        private bool _demo = false;
         private bool _predictionSelected;     // Flag to know if a prediction has been selected in the predictions window.
         private string _previousInput = "";
         private string _context;
@@ -59,9 +60,9 @@ namespace PhonoWriterWord
         private string _selectedPrediction;     // Return selected prediction.
         private DateTime _lastLog;              // Date of last log created. Avoid sending multiple logs
         private List<string> _predictions;
+        private StringTrie trie;
 
         #endregion
-
 
         #region Properties
 
@@ -75,7 +76,7 @@ namespace PhonoWriterWord
         public TextProvidersManager TextProvidersManager { get; private set; }
         public PredictionsManager PredictionsManager { get; private set; }
 
-        //public WordTextProvider WordTextProvider { get; private set; }
+        public WordTextProvider WordTextProvider { get; private set; }
 
 
         // Services
@@ -100,7 +101,6 @@ namespace PhonoWriterWord
             eh = new ElementHost { Child = wpf };
             usr.Controls.Add(eh);
             eh.Dock = DockStyle.Fill;
-            //this.Application.DocumentBeforeSave += new Word.ApplicationEvents4_DocumentBeforeSaveEventHandler(Application_DocumentBeforeSave);
             System.Diagnostics.Debug.WriteLine("Hello World");
             myCustomTaskPane = this.CustomTaskPanes.Add(usr, "My Task Pane");
             myCustomTaskPane.Visible = true;
@@ -119,12 +119,90 @@ namespace PhonoWriterWord
             CheckFolders();
             InitializeServices();
 
+            // Test ================
+            RegisterTextProviders();
+            // =====================
+
             wpf.dbc = DatabaseController;
 
             _application = Globals.ThisAddIn.Application;
 
             System.Diagnostics.Debug.WriteLine("Doc open");
 
+            System.Diagnostics.Debug.WriteLine("====================== CHECK INIT ======================");
+            System.Diagnostics.Debug.WriteLine("TextProvidersManager = " +this.TextProvidersManager.ToString());
+
+            System.Diagnostics.Debug.WriteLine("==================================================================");
+
+
+        }
+
+        private static System.Windows.Application wpfApplication = null;
+        public void DispatchToUI(Action action)
+        {
+            Microsoft.Office.Interop.Word.Application wordApplication = Globals.ThisAddIn.Application;
+            if (wordApplication != null && wordApplication.Windows.Count > 0)
+            {
+                object win = wordApplication.Windows[1];
+                if (win != null)
+                {
+                    object obj = win.GetType().InvokeMember("Application", BindingFlags.GetProperty, null, win, null);
+                    if (obj != null)
+                    {
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+                        {
+                            if (wpfApplication == null)
+                            {
+                                wpfApplication = new System.Windows.Application();
+                                wpfApplication.Run();
+                            }
+                            wpfApplication.Dispatcher.Invoke(action);
+                        });
+                    }
+                }
+            }
+        }
+
+        public void Apply(string prediction)
+        {
+            DispatchToUI(() =>
+            {
+
+                string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(); // GetPreviousWord();//
+
+            System.Diagnostics.Debug.WriteLine("Apply [_currentInput : '{0}', _previousInput : '{1}', prediction : '{2}']", _currentInput, previousInput, prediction);
+
+                var lm = Globals.ThisAddIn.LanguagesManager;
+
+                var language = lm.CurrentLanguage; //LanguagesManager.Languages[Configuration.Language - 1];
+
+                // Update pair.
+                if (!string.IsNullOrWhiteSpace(previousInput))
+                    PredictionsService.UpdatePair(language, previousInput, prediction);
+
+                // Increment word's balancy if exists.
+                var word = language.Words.Find(w => w.Text == prediction);
+                if (word != null)
+                {
+                    word.Occurrence++;
+                    word.IsUpdated = true;
+                    language.Update(word);
+                }
+
+                TextProvidersManager.Apply(_currentInput, prediction);
+
+            });
+        }
+
+        private string GetPreviousWord()
+        {
+            Word.Selection selection = Globals.ThisAddIn.Application.Selection;
+            Word.Range currentRange = selection.Range;
+
+            currentRange.MoveStart(Word.WdUnits.wdWord, -1);
+            string previousWord = currentRange.Text;
+
+            return previousWord;
         }
 
         private void Application_DocumentChange()
@@ -150,16 +228,23 @@ namespace PhonoWriterWord
                 return;
             }
             string currentWord = GetCurrentWord(selection);
+            // ======================
+            if (!selection.Equals(_currentInput))
+                WordTextProvider.SelectionChanged();
+            // ======================
+
             System.Diagnostics.Debug.WriteLine("--------------------Current------------------------------");
 
             System.Diagnostics.Debug.WriteLine(currentWord);
 
 
-            if (!string.IsNullOrWhiteSpace(currentWord) && !_previousInput.Equals(currentWord))
+            if (!string.IsNullOrWhiteSpace(currentWord))// && !_previousInput.Equals(currentWord)
             {
                 GetSuggestions(currentWord);
-                Console.WriteLine($"Current word: {currentWord}");
-                Console.WriteLine("Suggestions:");
+                //Apply(currentWord); // need to apply A PREDICTOR !!! NOT A WORD
+                System.Diagnostics.Debug.WriteLine($"Current word: {currentWord}");
+                System.Diagnostics.Debug.WriteLine("Suggestions:");
+
                 //foreach (string suggestion in )
                 //{
                 //    System.Diagnostics.Debug.WriteLine(suggestion);
@@ -174,11 +259,10 @@ namespace PhonoWriterWord
         private string GetCurrentWord(Word.Selection selection)
         
         {
-            System.Diagnostics.Debug.WriteLine("Word");
 
             int originalStart = selection.Start;
             int originalEnd = selection.End;
-
+            System.Diagnostics.Debug.WriteLine("From ThisAddIn.cs - GetCurrentWord - range from " +originalStart +" To " +originalEnd);
             Word.Range range = _application.ActiveDocument.Range(originalStart, originalEnd);
 
             object unit = Word.WdUnits.wdWord;
@@ -193,14 +277,14 @@ namespace PhonoWriterWord
             // Trim spaces and return the current word
             string currentWord = range.Text?.Trim() ?? string.Empty;
 
-           // System.Diagnostics.Debug.WriteLine(currentWord);
+            System.Diagnostics.Debug.WriteLine("From ThisAddIn.cs - GetCurrentWord - line 281 : " +currentWord);
 
             return currentWord;
         }
 
         private void GetSuggestions(string input)
         {
-            System.Diagnostics.Debug.WriteLine("Suggestionsss");
+            System.Diagnostics.Debug.WriteLine("From GetSuggestions - ThisAddin.cs line 287 - INPUT = "+input);
 
             System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
         lw.Items.Clear();
@@ -212,25 +296,36 @@ namespace PhonoWriterWord
             ((System.Windows.Controls.Image) wpf.FindName("pictureBox")).Source = null;
             PredictionsManager.Request(input);
 
-            var defaultParallelOptions = new ParallelOptions();
-        var words = pc.Work(input, defaultParallelOptions);
-        var words1 = pf.Work(input, defaultParallelOptions);
-  
-            foreach (var w in words)
+            //var defaultParallelOptions = new ParallelOptions();
+            //var words = pc.Work(input, defaultParallelOptions);
+            //var words1 = pf.Work(input, defaultParallelOptions);
+            //var words2 = pr.Work(input, defaultParallelOptions);
+
+            //foreach (var w in words)
+            //{
+            //    lw.Items.Add(w.Prediction);
+            //}
+
+            //foreach (var w in words1)
+            //{
+            //    lw.Items.Add(w.Prediction);
+            //}
+
+            //if (lw.Items.Count > 0)
+            //{
+            //    lw.SelectedIndex = 0;
+            //}
+
+            
+
+            System.Diagnostics.Debug.WriteLine("End of GetSuggestion - Start of displaying predictions - size : " +_predictions.Count());
+
+            foreach (var w in _predictions)
             {
-                lw.Items.Add(w.Prediction);
+                lw.Items.Add(w);
             }
 
-            foreach (var w in words1)
-            {
-                lw.Items.Add(w.Prediction);
-            }
-
-            if (lw.Items.Count > 0)
-            {
-                lw.SelectedIndex = 0;
-            }
-            }
+        }
         
 
 
@@ -242,9 +337,13 @@ namespace PhonoWriterWord
             LanguagesManager = new LanguagesManager();
             //EnginesManager = new EnginesManager();
             TextProvidersManager = new TextProvidersManager();
+            //=====================================
+            WordTextProvider = new WordTextProvider();
+            //=====================================
+
             //PredictionsProvidersManager = new PredictionsProvidersManager();
             PredictionsManager = new PredictionsManager();
-            
+           
             PredictionsService = new PredictionsService();
             //SpyService = new SpyService();
             //if (IsWindows11())
@@ -255,6 +354,14 @@ namespace PhonoWriterWord
             LanguagesManager.Initialize();
             PredictionsManager.Initialize();
             TextProvidersManager.Initialize();
+
+            // Register events.
+            //Configuration.ConfigurationChanged += Configuration_Changed;
+            PredictionsManager.PredictionsFound += PredictionsManager_PredictionsFound;
+            //PredictionsManager.PredictionSelected += PredictionsManager_PredictionSelected;
+            TextProvidersManager.PunctuationFound += TextProvidersManager_PunctuationFound;
+            TextProvidersManager.SeparatorFound += TextProvidersManager_SeparatorFound;
+            TextProvidersManager.TextFound += TextProvidersManager_TextFound;
 
         }
 
@@ -304,173 +411,101 @@ namespace PhonoWriterWord
 
         }
 
-        //private void RegisterTextProviders()
-        //{
-        //    //TextProvidersManager.RegisterProvider(WordTextProvider);
-        //    //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
-        //}
+        private void RegisterTextProviders()
+        {
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 384 - RegisterTextProviders()");
+            TextProvidersManager.RegisterProvider(WordTextProvider);
+            //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 387 - TextProviders = " +this.WordTextProvider);
+        }
 
-        //private void PredictionsManager_PredictionFound(object sender, PredictionsFoundArgs e)
-        //{
-        //    _predictionSelected = false;
+        private void PredictionsManager_PredictionsFound(object sender, PredictionsFoundArgs e)
+        {
+            _predictionSelected = false;
 
-        //    if (e.Input != _currentInput)
-        //        return;
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 426 - PredictionsFound ! e.Input = " +e.Input.ToString() + " _currentInput = " +_currentInput);
 
-
-        //    //
-        //    // Prepare predictions.
-        //    //
-
-
-        //    // Filter predictions.
-        //    _predictions = PredictionsManager.Filter(e.Predictions, e.Input);
-
-        //    // Code below commented until Configuration.PictographicHidePictureless is created
-        //    //// Hide pictureless words if necessary.
-        //    //if (Configuration.PictographicHidePictureless)
-        //    //{
-        //    //    var retained = new List<string>();
-        //    //    var words = LanguagesManager.GetLanguage((LanguagesEnum)Configuration.InterfaceLanguage).Words;
-
-        //    //    for (int i = 0; i < _predictions.Count; i++)
-        //    //    {
-        //    //        // Bypass if word exist and has no image or doesn't exist.
-        //    //        var results = words.Where(w => w.Text == _predictions[i]);
-        //    //        if (results.Any() && results.First().Image > 0)
-        //    //            retained.Add(_predictions[i]);
-        //    //    }
-
-        //    //    _predictions = retained;
-        //    //}
-
-        //    // Add predictive following word if possible.
-        //    int max = 7; // Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber;
-        //    int nexts = max - _predictions.Count; // (INSTEAD OF 'max') : Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber 
-
-        //    if (!_demo)
-        //    {
-        //        string previousWord = TextProvidersManager.CurrentProvider.GetPreviousWord().ToLower();
-        //        var nextWords = PredictionsManager.RequestRelationships(previousWord).OrderByDescending(o => o.Value).Where(w => w.Prediction.StartsWith(e.Input)).Take(nexts);
-        //        _predictions.InsertRange(0, nextWords.Select(s => s.Prediction).Take(nexts));
-
-        //        if (e.Input.Length > 0 && Configuration.Language == (int)LanguagesEnum.Francais)
-        //        {
-        //            var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).Take(9).Select(s => s.ToString().Substring(previousWord.Length + 1));
-        //            //var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).OrderBy(o => o.ToString().Length).Take(nexts - nextWords.Count()).Select(s => s.ToString().Substring(previousWord.Length + 1));
-        //            _predictions.InsertRange(0, suggestions); //_couples.Where(w => w.StartsWith(previousWord + " " + e.Input)).OrderBy(o => o.Length).Take(nexts - nextWords.Count()).Select(s => s.Substring(previousWord.Length + 1)));
-        //        }
-
-        //        _predictions.RemoveAll(m => m.Length == 0);
-        //        Console.WriteLine("PREVIOUS : '{0}'", previousWord);
-        //        // Restore the uppercase from input if necessary.
-        //        //if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]) || previousWord == string.Empty) <= error with previousWord empty, causing too much uppercase on wrong conditions
-        //        if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]))
-        //            _predictions = _predictions.Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1)).ToList();
-        //    }
-
-        //    //// Remove eszatts for swiss german if needed.
-        //    //if (Configuration.RemoveEszetts && Configuration.Language == (int)LanguagesEnum.Deutsch)
-        //    //    _predictions = _predictions.Select(s => s.Replace("ß", "ss")).ToList();
-
-        //    // Sort and regroup.
-        //    _predictions = _predictions.GroupBy(s => s).OrderByDescending(g => g.Count()).Select(g => g.Key).Take(max).ToList();
+            // TEST ==========
+            //if (e.Input != _currentInput)
+            //    return;
 
 
-        //    //
-        //    // Show predictions
-        //    //
+            //
+            // Prepare predictions.
+            //
 
-        //}
+            // Filter predictions.
+            _predictions = PredictionsManager.Filter(e.Predictions, _currentInput); //e.Input
 
-        //====================================================================
+            // Code below commented until Configuration.PictographicHidePictureless is created
+            //// Hide pictureless words if necessary.
+            //if (Configuration.PictographicHidePictureless)
+            //{
+            //    var retained = new List<string>();
+            //    var words = LanguagesManager.GetLanguage((LanguagesEnum)Configuration.InterfaceLanguage).Words;
 
-        //private void Application_WindowSelectionChange(Word.Selection sel)
-        //{
-        //    // the
-        //    //
-        //    //
-        //    //
-        //    // will contain the list of proposed words
-        //    System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
-        //   // lw.Items.Clear();
+            //    for (int i = 0; i < _predictions.Count; i++)
+            //    {
+            //        // Bypass if word exist and has no image or doesn't exist.
+            //        var results = words.Where(w => w.Text == _predictions[i]);
+            //        if (results.Any() && results.First().Image > 0)
+            //            retained.Add(_predictions[i]);
+            //    }
 
-        //    // the PictureBox will contain the picture related to the selected word
-        //    System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
+            //    _predictions = retained;
+            //}
 
-        //    Word.Document document = this.Application.ActiveDocument;
-        //    //select the range of the word when the cursor is on it
-        //    Range selectionRange = document.ActiveWindow.Selection.Range;
-        //    selectionRange.Expand(WdUnits.wdWord);
-        //    string word = selectionRange.Text.Trim();
-        //    //assigning the value to our label
-        //    System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
-        //    label.Content = word;
-        //    ((System.Windows.Controls.Image)wpf.FindName("pictureBox")).Source = null;
-        //    PredictionsManager.Request(word);
+            // Add predictive following word if possible.
+            int max = 7; // Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber;
+            int nexts = 4;//max - _predictions.Count; // (INSTEAD OF 'max') : Configuration.ClassicPredictionsNumber + Configuration.FuzzyPredictionNumber + Configuration.PhoneticPredictionNumber 
 
-        //    //=================================================================================
-        //    // Update pair.
-        //    //string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(document);
-        //    //var language = new Database.Models.Language(1, "fr");
-        //    //if (!string.IsNullOrWhiteSpace(previousInput))
-        //    //    PredictionsService.UpdatePair(language, previousInput, "Relationship"); // prediction instead of "Relationship"
+            System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - Nexts ?? nb of predictions ?? " + _predictions.Count());
 
-        //    //// Increment word's balancy if exists.
-        //    //var w1 = language.Words.Find(w => w.Text == "Relationship"); // prediction instead of "Relationship"
-        //    //if (w1 != null)
-        //    //{
-        //    //    w1.Occurrence++;
-        //    //    w1.IsUpdated = true;
-        //    //    language.Update(w1);
-        //    //}
+            foreach(var p in _predictions)
+            {
+                System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - Predictions, PredictionsManager_PredictionsFound : " + p);
+            }
 
-        //    //TextProvidersManager.Apply(_currentInput, "Relationship"); // prediction instead of "Relationship"
+            //if (_demo)
+            //{
+            //    var lm = Globals.ThisAddIn.LanguagesManager;
+            //    string previousWord = TextProvidersManager.CurrentProvider.GetPreviousWord().ToLower();
+            //    var nextWords = PredictionsManager.RequestRelationships(previousWord).OrderByDescending(o => o.Value).Where(w => w.Prediction.StartsWith(e.Input)).Take(nexts);
+            //    _predictions.InsertRange(0, nextWords.Select(s => s.Prediction).Take(nexts));
 
-        //    //=================================================================================
+            //    if (e.Input.Length > 0 && lm.CurrentLanguage == lm.GetLanguage(LanguagesEnum.Francais))
+            //    {
+            //        var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).Take(9).Select(s => s.ToString().Substring(previousWord.Length + 1));
+            //        //var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).OrderBy(o => o.ToString().Length).Take(nexts - nextWords.Count()).Select(s => s.ToString().Substring(previousWord.Length + 1));
+            //        _predictions.InsertRange(0, suggestions); //_couples.Where(w => w.StartsWith(previousWord + " " + e.Input)).OrderBy(o => o.Length).Take(nexts - nextWords.Count()).Select(s => s.Substring(previousWord.Length + 1)));
+            //    }
 
-        //    var defaultParallelOptions = new ParallelOptions();
-        //    var words = pc.Work(word, defaultParallelOptions);
-        //    var words1 = pf.Work(word, defaultParallelOptions);
-        //    //var words2 = pr.Work(word, defaultParallelOptions);
+            //    _predictions.RemoveAll(m => m.Length == 0);
+            //    Console.WriteLine("PREVIOUS : '{0}'", previousWord);
+            //    // Restore the uppercase from input if necessary.
+            //    //if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]) || previousWord == string.Empty) <= error with previousWord empty, causing too much uppercase on wrong conditions
+            //    if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]))
+            //        _predictions = _predictions.Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1)).ToList();
+            //}
 
+            //// Remove eszatts for swiss german if needed.
+            //if (Configuration.RemoveEszetts && Configuration.Language == (int)LanguagesEnum.Deutsch)
+            //    _predictions = _predictions.Select(s => s.Replace("ß", "ss")).ToList();
 
+            // Sort and regroup.
+            _predictions = _predictions.GroupBy(s => s).OrderByDescending(g => g.Count()).Select(g => g.Key).Take(max).ToList();
 
-        //    /*var ic = new ImagesController(DatabaseController);
-        //    var wc = new WordsController(DatabaseController);
-        //    var fr = new Database.Models.Language(1, "fr");
-        //    var wordObj = wc.ResearchByText(fr, word);
+            //
+            // Show predictions
+            //
 
-        //    if (wordObj != null)
-        //    {
-        //        var img = ic.ResearchByWord(wordObj);
-        //        System.Diagnostics.Debug.WriteLine(img.FileName);
-        //    }*/
+        }
 
-        //    foreach (var w in words)
-        //    {
-        //        lw.Items.Add(w.Prediction);
-        //    }
+        private void PredictionsManager_PredictionSelected(object sender, string prediction)
+        {
+            Apply(prediction);
+        }
 
-        //    foreach (var w in words1)
-        //    {
-        //        lw.Items.Add(w.Prediction);
-        //    }
-
-        //    if (lw.Items.Count > 0)
-        //    {
-        //        lw.SelectedIndex = 0;
-        //        //wpf.LoadImage(new Database.Models.Language(1, "fr"),lw.SelectedItem.ToString());
-        //    }
-
-        //}
-
-            
-        //void Application_DocumentBeforeSave(Word.Document Doc, ref bool SaveAsUI, ref bool Cancel)
-        //{
-        //    Doc.Paragraphs[1].Range.InsertParagraphBefore();
-        //    Doc.Paragraphs[1].Range.Text = "Saving code.";
-        //}
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
             if (_timer != null)
@@ -527,22 +562,22 @@ namespace PhonoWriterWord
 
             // Read found text.
             //!!!!!!!!!!!!!!CHANGE CONDITION
-            if (true)
-            {
-                Task.Run(() =>
-                {
-                    // Assume we have to wait 500ms so the phonetic prediction
-                    // can run before we play the selected text.
-                    // TODO : Increase if users complains.
-                    //Thread.Sleep(500); //UNCOMMENT for Phonetic Prediction -- GAETAN
+            //if (true)
+            //{
+            //    Task.Run(() =>
+            //    {
+            //        // Assume we have to wait 500ms so the phonetic prediction
+            //        // can run before we play the selected text.
+            //        // TODO : Increase if users complains.
+            //        //Thread.Sleep(500); //UNCOMMENT for Phonetic Prediction -- GAETAN
 
-                    // Prevent playing the text too fast (can be annoying).
-                    if (_currentInput != e.Text)
-                        return;
+            //        // Prevent playing the text too fast (can be annoying).
+            //        if (_currentInput != e.Text)
+            //            return;
 
-                    //EnginesManager.CurrentEngine.Speak(e.Text, LanguageUtils.ConvertLanguageToString(Configuration.Language, true), Configuration.VoiceVolume, Configuration.VoiceSpeed);
-                });
-            }
+            //        //EnginesManager.CurrentEngine.Speak(e.Text, LanguageUtils.ConvertLanguageToString(Configuration.Language, true), Configuration.VoiceVolume, Configuration.VoiceSpeed);
+            //    });
+            //}
 
             // Start a predictions request.
             if (_currentInput != e.Text)
@@ -551,6 +586,34 @@ namespace PhonoWriterWord
             // Store current input for futur usage.
             _currentInput = e.Text;
         }
+
+        private void TextProvidersManager_PunctuationFound(object sender, EventArgs e)
+        {
+            ClearPredictions();
+        }
+
+        private void TextProvidersManager_SeparatorFound(object sender, SeparatorFoundArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("TextProvidersManager_SeparatorFound [previous : '{0}']", e.PreviousWord);
+
+            _currentInput = string.Empty;
+
+            ClearPredictions();
+
+            _previousInput = e.PreviousWord;
+            //_currentInput = e.PreviousWord;
+
+            // Start a predictions request.
+            if (!_demo)
+                PredictionsManager_PredictionsFound(this, new PredictionsFoundArgs(string.Empty, new List<Predictions.PredictionValue>()));
+        }
+
+        private void ClearPredictions()
+        {
+            _currentInput = string.Empty;
+            _predictionSelected = false;
+        }
+
         public static void LanguageChanged(string selectedLanguage)
         {
             var lm = Globals.ThisAddIn.LanguagesManager;

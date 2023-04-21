@@ -40,7 +40,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 				PredictionValue pv = new PredictionValue();
 				pv.Prediction = word.Text;
 				pv.Value = word.Occurrence;
-				pv.Type = PredictionType.CLASSIC;
+				pv.Type = PredictionTypes.CLASSIC;
 
 				results.Add(pv);
 			}

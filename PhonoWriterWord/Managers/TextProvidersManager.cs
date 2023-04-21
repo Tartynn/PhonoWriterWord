@@ -1,4 +1,5 @@
 ﻿using PhonoWriterWord.Sources.Classes;
+using PhonoWriterWord.Utils;
 using System;
 
 namespace PhonoWriterWord.Managers
@@ -43,7 +44,7 @@ namespace PhonoWriterWord.Managers
 
 		public void Apply(string input, string prediction)
 		{
-			_currentProvider.Apply(input, prediction); // _app.Application.ActiveDocument : added for Word's Add-Ins (modification of ITextProvider)
+			_currentProvider.Apply(input, prediction);
 		}
 
 		public void Initialize()
@@ -53,7 +54,12 @@ namespace PhonoWriterWord.Managers
 		public void RegisterProvider(ITextProvider provider)
 		{
 			if (provider == null)
+            {
+				System.Diagnostics.Debug.WriteLine("TextProvidersManager.cs -> RegisterProvider => PROVIDER NULL");
 				return;
+			}
+
+			System.Diagnostics.Debug.WriteLine("TextProvidersManager.cs -> RegisterProvider => PROVIDER Not null");
 
 			provider.PunctuationFound += delegate (object sender, EventArgs e)
 			{
@@ -75,6 +81,8 @@ namespace PhonoWriterWord.Managers
 				_currentInput = e.Text;
 				TextFound?.Invoke(sender, e);
 			};
+
+			System.Diagnostics.Debug.WriteLine("TextProvidersManager.cs -> _currentProvider => " +_currentProvider);
 		}
 
 		#endregion

@@ -66,7 +66,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 					var p = new PredictionValue();
 					p.Prediction = l.Text;
 					p.Value = l.Occurrence;
-					p.Type = PredictionType.FUZZY;
+					p.Type = PredictionTypes.FUZZY;
 					results.Add(p);
 				}
 
@@ -136,7 +136,7 @@ namespace PhonoWriterWord.Predictions.Predictors
 					{
 						pv.Prediction = word.Key.Text;
 						pv.Value = word.Value;
-						pv.Type = PredictionType.FUZZY;
+						pv.Type = PredictionTypes.FUZZY;
 					};
 
 					results.Add(pv);
@@ -152,8 +152,8 @@ namespace PhonoWriterWord.Predictions.Predictors
 
 
 			// FOR DEBUG PURPOSES
-			foreach (var result in _results)
-				System.Diagnostics.Debug.WriteLine("\t{0} : {1}", result, wordsByValue.Where(w => w.Key.Text == result).Single().Value);
+			//foreach (var result in _results)
+			//	System.Diagnostics.Debug.WriteLine("\t{0} : {1}", result, wordsByValue.Where(w => w.Key.Text == result).Single().Value);
 		}
 	}
 }

@@ -18,11 +18,6 @@ namespace PhonoWriterWord.Sources.Classes
         event EventHandler<SeparatorFoundArgs> SeparatorFound;		// Occures when a separator has been found.
         event EventHandler PunctuationFound;                        // Occures when a punctuation has been found.
 
-        //Adaptation to work with Word's Add-Ins
-        //void Apply(Document document, string input, string prediction);
-        //string GetPreviousWord(Document document);
-
-        // OLD CODE
         void Apply(string input, string prediction);
         string GetPreviousWord();
     }
