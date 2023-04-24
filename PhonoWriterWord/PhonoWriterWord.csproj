@@ -142,6 +142,7 @@
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.117.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
@@ -165,6 +166,7 @@
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -253,6 +255,7 @@
     <Compile Include="Managers\PredictionsConfigManager.cs" />
     <Compile Include="Managers\PredictionsManager.cs" />
     <Compile Include="Managers\TextProvidersManager.cs" />
+    <Compile Include="Managers\TtsManager.cs" />
     <Compile Include="Predictions\Predictors\Prediction.cs" />
     <Compile Include="Predictions\Predictors\PredictionAlternative.cs" />
     <Compile Include="Predictions\Predictors\PredictionClassic.cs" />
@@ -275,6 +278,7 @@
     <Compile Include="Sources\Predictions\PredictionRequest.cs" />
     <Compile Include="Services\UpdateService\DesktopUpdateService.cs" />
     <Compile Include="Utils\DistanceUtil.cs" />
+    <Compile Include="Utils\LanguageUtils.cs" />
     <Compile Include="Values\Constants.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -296,7 +300,7 @@
     <None Include="PhonoWriterWord_18_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_4_TemporaryKey.pfx" />
-    <None Include="PhonoWriterWord_7_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_5_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -345,12 +349,12 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_7_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_5_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>BD66FFD40B631AC34CF58ABFAA811D0D2F959EBE</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>78980E943B7E0037E7A3281CA60B2A7FAD305535</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,18 +10,15 @@ using PhonoWriterWord.Services;
 using System.IO;
 using PhonoWriterWord.Values;
 using PhonoWriterWord.Sources.Classes;
-using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using PhonoWriterWord.Predictions.Predictors;
-using PhonoWriterWord.Database.Controllers;
 using PhonoWriterWord.Enumerations;
-using PhonoWriterWord.Database.Models;
-using PhonoWriterWord.Sources.Classes;
 using Timer = System.Windows.Forms.Timer;
+using System.Windows.Threading;
 
 namespace PhonoWriterWord
 
@@ -40,7 +37,7 @@ namespace PhonoWriterWord
 
         private Timer _timer;
         private Word.Application _application;
-
+        private TtsManager _ttsManager;
         #region Variables
 
         // Instances
@@ -59,6 +56,9 @@ namespace PhonoWriterWord
         private string _selectedPrediction;     // Return selected prediction.
         private DateTime _lastLog;              // Date of last log created. Avoid sending multiple logs
         private List<string> _predictions;
+        private DispatcherTimer _auditionTimer; // Delay for prediction audition (avoid enqueuing too much predictions).
+        private string _name;                   // Project's name.
+        public bool IsWordTextTtsEnabled { get; set; } = true;
 
         #endregion
 
@@ -76,6 +76,8 @@ namespace PhonoWriterWord
         public PredictionsManager PredictionsManager { get; private set; }
 
         //public WordTextProvider WordTextProvider { get; private set; }
+        //public EnginesManager EnginesManager { get; private set; }
+
 
 
         // Services
@@ -84,17 +86,24 @@ namespace PhonoWriterWord
         public PredictionsService PredictionsService { get; protected set; }
         public object Configuration { get; internal set; }
         public static object config { get; private set; }
+        public Configuration Configuration1 { get; private set; }
+        public TtsManager TtsManager { get; private set; }
 
         //public SpyService SpyService { get; protected set; }
         //public DesktopUpdateService UpdateService { get; protected set; }
+        public static event EventHandler LanguageChangedEvent;
 
         public Prediction pc = new PredictionClassic();
         public Prediction pf = new PredictionFuzzy();
         public Prediction pr = new PredictionRelationship();
+
         #endregion
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine(Constants.ENGINES_DIRECTORY_PATH);
+            _ttsManager = new TtsManager();
+
             usr = new PWUserControl();
             wpf = new PWwpf();
             eh = new ElementHost { Child = wpf };
@@ -108,17 +117,17 @@ namespace PhonoWriterWord
             //Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
             // Globals.ThisAddIn.Application.DocumentOpen += new Word.ApplicationEvents4_DocumentOpenEventHandler(Application_DocumentOpen);
 
-
-            this.Application.DocumentChange += Application_DocumentChange;
+           
+            
+            Application.DocumentChange += Application_DocumentChange;
 
             //App Contructor
             _predictions = new List<string>();
             Current = this;
-
-            CheckDatabase();
+ CheckDatabase();
             CheckFolders();
             InitializeServices();
-
+   
             wpf.dbc = DatabaseController;
 
             _application = Globals.ThisAddIn.Application;
@@ -127,10 +136,11 @@ namespace PhonoWriterWord
 
         }
 
+
         private void Application_DocumentChange()
         {
             _timer = new Timer();
-            _timer.Interval = 1000; // Adjust the interval based on your requirements
+            _timer.Interval = 500; // Adjust the interval based on your requirements
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
@@ -159,6 +169,11 @@ namespace PhonoWriterWord
             {
                 GetSuggestions(currentWord);
                 Console.WriteLine($"Current word: {currentWord}");
+
+                if (IsWordTextTtsEnabled)
+                {
+                    _ttsManager.Speak(currentWord);
+                }
                 Console.WriteLine("Suggestions:");
                 //foreach (string suggestion in )
                 //{
@@ -170,6 +185,12 @@ namespace PhonoWriterWord
             System.Diagnostics.Debug.WriteLine(_previousInput);
             _previousInput = currentWord;
         }
+
+        public void ToggleWordTextTts()
+        {
+            IsWordTextTtsEnabled = !IsWordTextTtsEnabled;
+        }
+
 
         private string GetCurrentWord(Word.Selection selection)
         
@@ -225,6 +246,8 @@ namespace PhonoWriterWord
             {
                 lw.Items.Add(w.Prediction);
             }
+
+      
 
             if (lw.Items.Count > 0)
             {
@@ -282,6 +305,9 @@ namespace PhonoWriterWord
                 return;
             }
         }
+
+        
+
 
         //====================================================================
         //      Concerning 'setup' - needs improvement !
@@ -586,6 +612,10 @@ namespace PhonoWriterWord
             // LanguagesManager is null on startup, because for some reason this method gets called before InitializeServices is finished
             if (lm != null)
             {
+                Globals.ThisAddIn._ttsManager.SetVoiceForCurrentLanguage();
+
+                LanguageChangedEvent?.Invoke(null, EventArgs.Empty);
+
                 System.Diagnostics.Debug.WriteLine("CURRENT LANGUAGE " + lm.CurrentLanguage.Label);
             }
         }

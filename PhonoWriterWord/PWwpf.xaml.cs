@@ -30,6 +30,9 @@ namespace PhonoWriterWord
         private bool button5Clicked = false;
         private ListViewItem last = null;
         PredictionConfig config = PredictionsConfigManager.Config;
+        private TtsManager _ttsManager;
+        public bool IsTtsEnabled { get; set; } = true;
+
 
         public PWwpf()
         {
@@ -37,7 +40,10 @@ namespace PhonoWriterWord
             this.dbc = dbc;
             this.lm = lm;
             this._app = _app;
-            
+            _ttsManager = new TtsManager();
+            ThisAddIn.LanguageChangedEvent += OnLanguageChanged; // Subscribe to the new event
+
+
         }
 
         private void
@@ -60,6 +66,10 @@ namespace PhonoWriterWord
                 var wordObj = wc.ResearchByText(language, item.Content.ToString());             
                 if (wordObj != null)
                 {
+                    if (IsTtsEnabled)
+                    {                        
+                        _ttsManager.Speak(item.Content.ToString());
+                    }
                     var img = ic.ResearchByWord(wordObj);
                     if (img != null)
                     {
@@ -73,6 +83,12 @@ namespace PhonoWriterWord
             }
         }
 
+        private void OnLanguageChanged(object sender, EventArgs e)
+        {
+            if (_ttsManager != null)
+            {
+                _ttsManager.SetVoiceForCurrentLanguage();
+            }
         public void CallAddIn(ListViewItem item)
         {
             ThisAddIn.KeyReturnPressed(item);
@@ -151,11 +167,15 @@ namespace PhonoWriterWord
             {
                 Button3.Content = "Phonetic off";
                 config.PredictionPhoneticActive = false;
+                IsTtsEnabled = false;
+
             }
             else
             {
                 Button3.Content = "Phonetic on";
                 config.PredictionPhoneticActive = true;
+                IsTtsEnabled = true;
+
             }
         }
 
@@ -231,6 +251,12 @@ namespace PhonoWriterWord
                 Button4.Content = "Disabled";
                 config.HidePictureless = false;
             }
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ThisAddIn.Current.ToggleWordTextTts();
+
         }
     }
 }
