@@ -25,6 +25,7 @@ using Timer = System.Windows.Forms.Timer;
 //using PredictionsFoundArgs = PhonoWriterWord.Managers.PredictionsFoundArgs;
 using System.Linq;
 using System.Reflection;
+using PhonoWriterWord.Utils;
 
 namespace PhonoWriterWord
 
@@ -227,7 +228,8 @@ namespace PhonoWriterWord
             {
                 return;
             }
-            string currentWord = GetCurrentWord(selection);
+            //string currentWord = GetCurrentWord(selection);
+            string currentWord = TextBoxUtil.GetCurrentWord(_application.ActiveDocument);
             // ======================
             if (!selection.Equals(_currentInput))
                 WordTextProvider.SelectionChanged();
@@ -238,7 +240,7 @@ namespace PhonoWriterWord
             System.Diagnostics.Debug.WriteLine(currentWord);
 
 
-            if (!string.IsNullOrWhiteSpace(currentWord))// && !_previousInput.Equals(currentWord)
+            if (!string.IsNullOrWhiteSpace(currentWord) && !_previousInput.Equals(currentWord))
             {
                 GetSuggestions(currentWord);
                 //Apply(currentWord); // need to apply A PREDICTOR !!! NOT A WORD
@@ -318,7 +320,7 @@ namespace PhonoWriterWord
 
             Thread.Sleep(100);
 
-            System.Diagnostics.Debug.WriteLine("End of GetSuggestion - Start of displaying predictions - size : " +_predictions.Count());
+            System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - End of GetSuggestion(string input) - Start of displaying predictions - size : " +_predictions.Count());
 
             foreach (var w in _predictions)
             {
@@ -466,27 +468,27 @@ namespace PhonoWriterWord
                 System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - Predictions, PredictionsManager_PredictionsFound : " + p);
             }
 
-            //if (_demo)
-            //{
-            //    var lm = Globals.ThisAddIn.LanguagesManager;
-            //    string previousWord = TextProvidersManager.CurrentProvider.GetPreviousWord().ToLower();
-            //    var nextWords = PredictionsManager.RequestRelationships(previousWord).OrderByDescending(o => o.Value).Where(w => w.Prediction.StartsWith(e.Input)).Take(nexts);
-            //    _predictions.InsertRange(0, nextWords.Select(s => s.Prediction).Take(nexts));
+            if (_demo)
+            {
+                var lm = Globals.ThisAddIn.LanguagesManager;
+                string previousWord = TextProvidersManager.CurrentProvider.GetPreviousWord().ToLower();
+                var nextWords = PredictionsManager.RequestRelationships(previousWord).OrderByDescending(o => o.Value).Where(w => w.Prediction.StartsWith(e.Input)).Take(nexts);
+                _predictions.InsertRange(0, nextWords.Select(s => s.Prediction).Take(nexts));
 
-            //    if (e.Input.Length > 0 && lm.CurrentLanguage == lm.GetLanguage(LanguagesEnum.Francais))
-            //    {
-            //        var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).Take(9).Select(s => s.ToString().Substring(previousWord.Length + 1));
-            //        //var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).OrderBy(o => o.ToString().Length).Take(nexts - nextWords.Count()).Select(s => s.ToString().Substring(previousWord.Length + 1));
-            //        _predictions.InsertRange(0, suggestions); //_couples.Where(w => w.StartsWith(previousWord + " " + e.Input)).OrderBy(o => o.Length).Take(nexts - nextWords.Count()).Select(s => s.Substring(previousWord.Length + 1)));
-            //    }
+                if (e.Input.Length > 0 && lm.CurrentLanguage == lm.GetLanguage(LanguagesEnum.Francais))
+                {
+                    var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).Take(9).Select(s => s.ToString().Substring(previousWord.Length + 1));
+                    //var suggestions = trie.GetValuesByPrefix(previousWord + " " + e.Input).OrderBy(o => o.ToString().Length).Take(nexts - nextWords.Count()).Select(s => s.ToString().Substring(previousWord.Length + 1));
+                    _predictions.InsertRange(0, suggestions); //_couples.Where(w => w.StartsWith(previousWord + " " + e.Input)).OrderBy(o => o.Length).Take(nexts - nextWords.Count()).Select(s => s.Substring(previousWord.Length + 1)));
+                }
 
-            //    _predictions.RemoveAll(m => m.Length == 0);
-            //    Console.WriteLine("PREVIOUS : '{0}'", previousWord);
-            //    // Restore the uppercase from input if necessary.
-            //    //if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]) || previousWord == string.Empty) <= error with previousWord empty, causing too much uppercase on wrong conditions
-            //    if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]))
-            //        _predictions = _predictions.Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1)).ToList();
-            //}
+                _predictions.RemoveAll(m => m.Length == 0);
+                System.Diagnostics.Debug.WriteLine("PREVIOUS : '{0}'", previousWord);
+                // Restore the uppercase from input if necessary.
+                //if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]) || previousWord == string.Empty) <= error with previousWord empty, causing too much uppercase on wrong conditions
+                if (!string.IsNullOrWhiteSpace(e.Input) && char.IsUpper(e.Input[0]))
+                    _predictions = _predictions.Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1)).ToList();
+            }
 
             //// Remove eszatts for swiss german if needed.
             //if (Configuration.RemoveEszetts && Configuration.Language == (int)LanguagesEnum.Deutsch)

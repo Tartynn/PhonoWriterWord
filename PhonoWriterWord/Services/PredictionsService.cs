@@ -40,11 +40,18 @@ namespace PhonoWriterWord.Services
 			if (_request != null)
 				_request.Cancel();
 
-			System.Diagnostics.Debug.WriteLine("Request [input : '{0}']", input);
+			System.Diagnostics.Debug.WriteLine("PredictionsService - List<PredictionValue> Request(list predi, string input) - [input : " + input +"]");
 
 			_request = new PredictionsRequest(predictions, input.Trim());
 
-			return _request.Run();
+			var r= _request.Run();
+			foreach(var w in r)
+            {
+				System.Diagnostics.Debug.WriteLine("the return can be : " + w.Value);
+
+			}
+
+			return r;
 		}
 
 		public void UpdatePair(Language language, string first, string second, int occurrence = 1)

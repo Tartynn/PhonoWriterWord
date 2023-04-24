@@ -217,10 +217,10 @@ namespace PhonoWriterWord.Managers
             _predictions.Add(_predictionRelationship);
         }
 
-        public void Request(string input)
+        public async void Request(string input)
         {
             System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with input : " +input);
-            Request(_predictions, input);
+            await Request(_predictions, input);
         }
 
         public async Task Request(List<Prediction> predictions, string input)
@@ -254,10 +254,10 @@ namespace PhonoWriterWord.Managers
                 PredictionsFound?.Invoke(this, new PredictionsFoundArgs(input, results));
                 System.Diagnostics.Debug.WriteLine("PredictionsManager.cs TASK.RUN - END of request : " + results.Count());
 
-                //foreach (var w in results)
-                //{
-                //    System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - PREDICTIONS : " + w.Value + " : " + w.ToString());
-                //}
+                foreach (var w in results)
+                {
+                    System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - PREDICTIONS : " + w.Value + " : " + w.ToString());
+                }
 
             });
         }

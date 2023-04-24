@@ -89,9 +89,12 @@ namespace PhonoWriterWord.Predictions
 					if (_parallelOptions.CancellationToken.IsCancellationRequested)
 						return;
 
-					System.Diagnostics.Debug.WriteLine("Ended {0} prediction", prediction.Name);
+					System.Diagnostics.Debug.WriteLine("Ended {0} prediction, with {1} predictions", prediction.Name, predictionResults.Count());
 
 					predictionResults.ForEach(x => results.Add(x));
+
+					System.Diagnostics.Debug.WriteLine("Ended {0} prediction, filled out results List. Size = {1}", prediction.Name, results.Count());
+
 				});
 			}
 			catch // (OperationCanceledException e)
@@ -107,7 +110,8 @@ namespace PhonoWriterWord.Predictions
 				_cts.Dispose();
 				_cts = null;
 			}
-			System.Diagnostics.Debug.WriteLine(results);
+			System.Diagnostics.Debug.WriteLine("PredictionRequest.cs - end of Run() - results size : " +results.Count());
+
 			return new List<PredictionValue>(results.ToArray());
 			
 		}

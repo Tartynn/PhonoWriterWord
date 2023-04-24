@@ -54,54 +54,77 @@ namespace PhonoWriterWord.Utils
         /// </summary>
         /// <param name="activeDocument">TextBox from which the current word has to be retrieved</param>
         /// <returns></returns>
-        public static string GetCurrentWord(Document activeDocument)
+
+        public static string GetCurrentWord(Document document)
         {
-            Application app = activeDocument.Application;
-            Selection selection = app.Selection;
-            string wordBeforePointer = "";
-            string wordAfterPointer = "";
-
-            int originalStart = selection.Start;
-            int originalEnd = selection.End;
-
-            Microsoft.Office.Interop.Word.Range range = app.ActiveDocument.Range(originalStart, originalEnd);
-
-            object unit = Microsoft.Office.Interop.Word.WdUnits.wdWord;
-            object count = 1;
-
-            range.MoveStart(ref unit, -1);
-            range.MoveEnd(ref unit, 1);
-
-            // Restore the original selection
-            selection.SetRange(originalStart, originalEnd);
-
-            // Trim spaces and return the current word
-            string currentWord = range.Text?.Trim() ?? string.Empty;
-
-            // System.Diagnostics.Debug.WriteLine(currentWord);
-
-            return currentWord;
-
-            //if (selection.Type == WdSelectionType.wdSelectionIP)
-            //{
-            //    Range range = selection.Range;
-            //    range.MoveStart(WdUnits.wdWord, -1);
-            //    wordBeforePointer = range.Text.TrimEnd();
-            //    range.MoveStart(WdUnits.wdWord, 1);
-            //    range.MoveEnd(WdUnits.wdWord, 1);
-            //    wordAfterPointer = range.Text.TrimStart();
-            //}
-            //else
-            //{
-            //    Range range = selection.Range;
-            //    Range wordRange = range.Words.First;
-            //    wordBeforePointer = wordRange.Previous().Text.TrimEnd();
-            //    wordAfterPointer = wordRange.Next().Text.TrimStart();
-            //}
-
-            //return new string[2] { wordBeforePointer, wordAfterPointer };
-           
+            string currentText = GetCurrentText(document);
+            int selectionStart = document.Application.Selection.Start;
+            int selectionEnd = document.Application.Selection.End;
+            string textBeforePointer = currentText.Substring(0, selectionStart);
+            string textAfterPointer = currentText.Substring(selectionEnd);
+            string wordBeforePointer = new string(textBeforePointer.Reverse().TakeWhile(c => !char.IsSeparator(c) && !char.IsPunctuation(c)).Reverse().ToArray());
+            string wordAfterPointer = new string(textAfterPointer.TakeWhile(c => !char.IsSeparator(c) && !char.IsPunctuation(c)).ToArray());
+            return wordBeforePointer + wordAfterPointer;
         }
+
+        private static string GetCurrentText(Document document)
+        {
+            string text = "";
+            foreach (Range storyRange in document.StoryRanges)
+            {
+                text += storyRange.Text;
+            }
+            return text;
+        }
+
+        //public static string GetCurrentWord(Document activeDocument)
+        //{
+        //    Application app = activeDocument.Application;
+        //    Selection selection = app.Selection;
+        //    string wordBeforePointer = "";
+        //    string wordAfterPointer = "";
+
+        //    int originalStart = selection.Start;
+        //    int originalEnd = selection.End;
+
+        //    Microsoft.Office.Interop.Word.Range range = app.ActiveDocument.Range(originalStart, originalEnd);
+
+        //    object unit = Microsoft.Office.Interop.Word.WdUnits.wdWord;
+        //    object count = 1;
+
+        //    range.MoveStart(ref unit, -1);
+        //    range.MoveEnd(ref unit, 1);
+
+        //    // Restore the original selection
+        //    selection.SetRange(originalStart, originalEnd);
+
+        //    // Trim spaces and return the current word
+        //    string currentWord = range.Text?.Trim() ?? string.Empty;
+
+        //    // System.Diagnostics.Debug.WriteLine(currentWord);
+
+        //    return currentWord;
+
+        //    //if (selection.Type == WdSelectionType.wdSelectionIP)
+        //    //{
+        //    //    Range range = selection.Range;
+        //    //    range.MoveStart(WdUnits.wdWord, -1);
+        //    //    wordBeforePointer = range.Text.TrimEnd();
+        //    //    range.MoveStart(WdUnits.wdWord, 1);
+        //    //    range.MoveEnd(WdUnits.wdWord, 1);
+        //    //    wordAfterPointer = range.Text.TrimStart();
+        //    //}
+        //    //else
+        //    //{
+        //    //    Range range = selection.Range;
+        //    //    Range wordRange = range.Words.First;
+        //    //    wordBeforePointer = wordRange.Previous().Text.TrimEnd();
+        //    //    wordAfterPointer = wordRange.Next().Text.TrimStart();
+        //    //}
+
+        //    //return new string[2] { wordBeforePointer, wordAfterPointer };
+
+        //}
 
         public static string GetPreviousWord(ThisAddIn _app)
         {
