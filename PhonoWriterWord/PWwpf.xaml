@@ -34,16 +34,17 @@
                     <ComboBoxItem >Spanish</ComboBoxItem>
                 </ComboBox>
                 <Label Content="Enable classic prediction:" Margin="49,77,154,182"/>
+                <Label Content="Enable phonetic prediction::" Margin="50,176,153,83"/>
                 <Button Content="Classic on" Name="Button1" HorizontalAlignment="Left" Margin="221,80,0,0" VerticalAlignment="Top" Click="Button1_Click" Height="20"/>
                 <Label Content="Number of suggestions:" Margin="50,107,154,190"/>
                 <TextBlock TextWrapping="Wrap" Text="{Binding Value, ElementName=ClassicSlider}" Margin="201,112,132,158"/>
-                <Slider Margin="223,108,9,154" MaxWidth="130"  Value="5" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" ValueChanged="SliderClassic_ValueChanged" Name="ClassicSlider"/>
+                <Slider Margin="221,105,11,157" MaxWidth="130"  Value="5" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" ValueChanged="SliderClassic_ValueChanged" Name="ClassicSlider"/>
                 <Label Content="Min. number of characters:" Margin="52,136,143,126"/>
                 <TextBlock TextWrapping="Wrap" Text="{Binding Value, ElementName=ClassicSliderChar}" Margin="202,141,133,129"/>
                 <Slider Margin="223,136,9,357" MaxWidth="130"  Value="3" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" ValueChanged="SliderClassicChar_ValueChanged" Name="ClassicSliderChar"/>
 
-                <Label Content="Enable phonetic prediction:" Margin="49,176,145,124"/>
-                <Button Content="Phonetic on" Name="Button3" HorizontalAlignment="Left" Margin="221,179,0,0" VerticalAlignment="Top" Click="Button3_Click" Height="20"/>
+                <Label Content="Reading:" Margin="49,54,145,246"/>
+                <Button Content="Reading on" Name="Button3" HorizontalAlignment="Left" Margin="221,57,0,0" VerticalAlignment="Top" Click="Button3_Click" Height="20"/>
                 <Label Content="Number of suggestions:" Margin="49,202,155,95"/>
                 <TextBlock TextWrapping="Wrap" Text="{Binding Value, ElementName=PhoneticSlider}" Margin="201,207,132,98"/>
                 <Slider Margin="223,204,9,98" MaxWidth="130"  Value="5" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" ValueChanged="SliderPhonetic_ValueChanged" Name="PhoneticSlider"/>
@@ -64,6 +65,7 @@
                 <Button Content="Pictographic on" Name="Button5" HorizontalAlignment="Left" Margin="223,348,0,0" VerticalAlignment="Top" Click="Button5_Click" Height="20"/>
                 <Label Content="Hide pictureless words:" Margin="48,370,146,129"/>
                 <Button Content="Disabled" Name="Button4" HorizontalAlignment="Left" Margin="223,374,0,0" VerticalAlignment="Top" Click="Button4_Click" Height="20"/>
+                <Button Content="Phonetic on" x:Name="Button6" Margin="223,179,52,0" VerticalAlignment="Top" Click="Button6_Click" RenderTransformOrigin="0.5,0.5"/>
             </Grid>
         </Grid>
     </ScrollViewer>
