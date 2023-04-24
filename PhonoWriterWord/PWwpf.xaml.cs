@@ -28,6 +28,7 @@ namespace PhonoWriterWord
         private bool button3Clicked = false;
         private bool button4Clicked = false;
         private bool button5Clicked = false;
+        private ListViewItem last = null;
         PredictionConfig config = PredictionsConfigManager.Config;
 
         public PWwpf()
@@ -45,34 +46,18 @@ namespace PhonoWriterWord
             var item = sender as ListViewItem;
             if (item != null && config.PictographicActive)
             {
-                Microsoft.Office.Interop.Word.Selection selection = Globals.ThisAddIn.Application.Selection;
-
-                //if (selection.Range.Words.Count > 0)
-                //{
-                //    // get the word on which the cursor is
-                //    Microsoft.Office.Interop.Word.Range wordRange = selection.Range.Words[1];
-
-                //    // replace the word in Word doc by the word clicked on the list
-                //    wordRange.Text = item.Content.ToString();
-
-                //    // get the position of the end of the word
-                //    int endPosition = wordRange.End;
-
-                //    // move the cursor to the end of the word
-                //    selection.Start = endPosition;
-                //    selection.End = endPosition;
-
-                //}
-
-                //selection.Range.Text = item.Content.ToString();
-
+                String path = "";
+                pictureBox.Source = null;
+                if (item.Equals(last))
+                {
+                    CallAddIn(item);   
+                    return;
+                }
                 System.Diagnostics.Debug.WriteLine(item);
                 var ic = new ImagesController(dbc);
                 var wc = new WordsController(dbc);
                 var language = Globals.ThisAddIn.LanguagesManager.CurrentLanguage;
-                var wordObj = wc.ResearchByText(language, item.Content.ToString());
-                String path = "";
-                pictureBox.Source = null;
+                var wordObj = wc.ResearchByText(language, item.Content.ToString());             
                 if (wordObj != null)
                 {
                     var img = ic.ResearchByWord(wordObj);
@@ -83,8 +68,15 @@ namespace PhonoWriterWord
                         LoadImage(path);
                     }
                 }
+                last = item;
 
             }
+        }
+
+        public void CallAddIn(ListViewItem item)
+        {
+            ThisAddIn.KeyReturnPressed(item);
+            this.mySelection.Content = "";
         }
 
         public void LoadImage(string imagePath)
@@ -103,11 +95,7 @@ namespace PhonoWriterWord
             var item = sender as ListViewItem;
             if (item != null && item.IsSelected && e.Key == Key.Return)
             {
-                ThisAddIn.KeyReturnPressed(item);
-            }
-            if (e.Key == Key.Space)
-            {
-                myList.Items.Add("uwu");
+                CallAddIn(item);
             }
         }
 

@@ -102,7 +102,7 @@ namespace PhonoWriterWord
             eh.Dock = DockStyle.Fill;
             //this.Application.DocumentBeforeSave += new Word.ApplicationEvents4_DocumentBeforeSaveEventHandler(Application_DocumentBeforeSave);
             System.Diagnostics.Debug.WriteLine("Hello World");
-            myCustomTaskPane = this.CustomTaskPanes.Add(usr, "My Task Pane");
+            myCustomTaskPane = this.CustomTaskPanes.Add(usr, "PhonoWriter");
             myCustomTaskPane.Visible = true;
             myCustomTaskPane.Width = 400;
             //Globals.ThisAddIn.Application.WindowSelectionChange += new Word.ApplicationEvents4_WindowSelectionChangeEventHandler(Application_WindowSelectionChange);
