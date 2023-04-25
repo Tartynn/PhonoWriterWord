@@ -163,19 +163,19 @@ namespace PhonoWriterWord.Managers
             if (predictionsStrings.Count > max)
                 predictionsStrings.RemoveRange(max, predictionsStrings.Count - max);
 
-            //// Put the most similar hashed word on top.
-            //var inputHash = Algorithms.Splitter(input, (LanguagesEnum)_app.Configuration.Language);
-            //for (int i = 0; i < predictionsStrings.Count; i++)
-            //{
-            //    string prediction = predictionsStrings[i];
-            //    var predictionHash = Algorithms.Splitter(predictionsStrings[i], (LanguagesEnum)_app.Configuration.Language);
-            //    if (inputHash == predictionHash)
-            //    {
-            //        predictionsStrings.RemoveAt(i);
-            //        predictionsStrings.Insert(0, prediction); // Put word on top.
-            //        break;
-            //    }
-            //}
+            // Put the most similar hashed word on top.
+            var inputHash = Algorithms.Algorithms.Splitter(input, language.getLanguageEnum(language)); // (LanguagesEnum)_app.Configuration.Language
+            for (int i = 0; i < predictionsStrings.Count; i++)
+            {
+                string prediction = predictionsStrings[i];
+                var predictionHash = Algorithms.Algorithms.Splitter(predictionsStrings[i], language.getLanguageEnum(language)); // (LanguagesEnum)_app.Configuration.Language
+                if (inputHash == predictionHash)
+                {
+                    predictionsStrings.RemoveAt(i);
+                    predictionsStrings.Insert(0, prediction); // Put word on top.
+                    break;
+                }
+            }
 
             // Add alternatives on top of all
             predictionsStrings.InsertRange(0, alternatives.Select(s => s.Prediction).Distinct().ToList());
@@ -205,7 +205,7 @@ namespace PhonoWriterWord.Managers
             _predictionAlternative = new PredictionAlternative();
             _predictionFuzzy = new PredictionFuzzy();
             //_predictionPhonetic = new PredictionPhonetic();
-            _predictionRelationship = new PredictionRelationship();
+            //_predictionRelationship = new PredictionRelationship();
 
             _predictions.Clear();
 
@@ -214,16 +214,16 @@ namespace PhonoWriterWord.Managers
             _predictions.Add(_predictionFuzzy);
             //if (_app.Configuration.PhoneticPredictionActivated && _app.EnginesManager.HasEngines && _predictionPhonetic != null)
             //_predictions.Add(_predictionPhonetic);
-            _predictions.Add(_predictionRelationship);
+            //_predictions.Add(_predictionRelationship);
         }
 
-        public async void Request(string input)
+        public void Request(string input)
         {
             System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - Request with input : " +input);
-            await Request(_predictions, input);
+            Request(_predictions, input);
         }
 
-        public async Task Request(List<Prediction> predictions, string input)
+        public void Request(List<Prediction> predictions, string input)
         {
             if (input == null || string.IsNullOrWhiteSpace(input))
             {
@@ -239,8 +239,7 @@ namespace PhonoWriterWord.Managers
             _lastInput = input;
 
             // Launch request.
-            // Pourquoi ça ne passe pas dans Task.Run ???? - Gaétan
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - [text : '{0}', lastInput : '{1}']", input, _lastInput);
 
@@ -256,7 +255,7 @@ namespace PhonoWriterWord.Managers
 
                 foreach (var w in results)
                 {
-                    System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - PREDICTIONS : " + w.Value + " : " + w.ToString());
+                    System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - PREDICTIONS : " + w.Prediction + " : " + w.ToString());
                 }
 
             });
@@ -269,6 +268,7 @@ namespace PhonoWriterWord.Managers
 
         public List<PredictionValue> RequestRelationships(string input)
         {
+            System.Diagnostics.Debug.WriteLine("PredictionsManager.cs - RequestRelationships - input = " + input);
             return _app.PredictionsService.Request(new List<Prediction>() { _predictionRelationship }, input);
         }
 

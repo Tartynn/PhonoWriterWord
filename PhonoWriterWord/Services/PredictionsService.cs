@@ -44,14 +44,14 @@ namespace PhonoWriterWord.Services
 
 			_request = new PredictionsRequest(predictions, input.Trim());
 
-			var r= _request.Run();
-			foreach(var w in r)
-            {
-				System.Diagnostics.Debug.WriteLine("the return can be : " + w.Value);
+			//var r= _request.Run();
+			//foreach(var w in r)
+   //         {
+			//	System.Diagnostics.Debug.WriteLine("the return can be : " + w.Prediction);
 
-			}
+			//}
 
-			return r;
+			return _request.Run();
 		}
 
 		public void UpdatePair(Language language, string first, string second, int occurrence = 1)

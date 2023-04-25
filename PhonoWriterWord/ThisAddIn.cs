@@ -53,7 +53,7 @@ namespace PhonoWriterWord
 
 
         // Variables
-        private bool _demo = false;
+        private bool _demo ;
         private bool _predictionSelected;     // Flag to know if a prediction has been selected in the predictions window.
         private string _previousInput = "";
         private string _context;
@@ -122,6 +122,30 @@ namespace PhonoWriterWord
 
             // Test ================
             RegisterTextProviders();
+
+            // TEMPORARY ======================================================
+
+            Task.Run(() =>
+            {
+                trie = new StringTrie();
+                if (File.Exists("couples.txt")) 
+                { 
+                    foreach (var c in File.ReadAllLines("couples.txt"))
+                        trie.Add(new StringTrieNode(c));
+                }
+                //Console.WriteLine("ADDED TRIE " + trie.Count());
+            });
+
+            // TEMPORARY ======================================================
+
+            // Register events.
+            //Configuration.ConfigurationChanged += Configuration_Changed;
+            PredictionsManager.PredictionsFound += PredictionsManager_PredictionsFound;
+            //PredictionsManager.PredictionSelected += PredictionsManager_PredictionSelected;
+            TextProvidersManager.PunctuationFound += TextProvidersManager_PunctuationFound;
+            TextProvidersManager.SeparatorFound += TextProvidersManager_SeparatorFound;
+            TextProvidersManager.TextFound += TextProvidersManager_TextFound;
+
             // =====================
 
             wpf.dbc = DatabaseController;
@@ -130,70 +154,64 @@ namespace PhonoWriterWord
 
             System.Diagnostics.Debug.WriteLine("Doc open");
 
-            System.Diagnostics.Debug.WriteLine("====================== CHECK INIT ======================");
-            System.Diagnostics.Debug.WriteLine("TextProvidersManager = " +this.TextProvidersManager.ToString());
-
-            System.Diagnostics.Debug.WriteLine("==================================================================");
-
-
         }
 
-        private static System.Windows.Application wpfApplication = null;
-        public void DispatchToUI(Action action)
-        {
-            Microsoft.Office.Interop.Word.Application wordApplication = Globals.ThisAddIn.Application;
-            if (wordApplication != null && wordApplication.Windows.Count > 0)
-            {
-                object win = wordApplication.Windows[1];
-                if (win != null)
-                {
-                    object obj = win.GetType().InvokeMember("Application", BindingFlags.GetProperty, null, win, null);
-                    if (obj != null)
-                    {
-                        System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
-                        {
-                            if (wpfApplication == null)
-                            {
-                                wpfApplication = new System.Windows.Application();
-                                wpfApplication.Run();
-                            }
-                            wpfApplication.Dispatcher.Invoke(action);
-                        });
-                    }
-                }
-            }
-        }
+        //private static System.Windows.Application wpfApplication = null;
+        //public void DispatchToUI(Action action)
+        //{
+        //    Microsoft.Office.Interop.Word.Application wordApplication = Globals.ThisAddIn.Application;
+        //    if (wordApplication != null && wordApplication.Windows.Count > 0)
+        //    {
+        //        object win = wordApplication.Windows[1];
+        //        if (win != null)
+        //        {
+        //            object obj = win.GetType().InvokeMember("Application", BindingFlags.GetProperty, null, win, null);
+        //            if (obj != null)
+        //            {
+        //                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+        //                {
+        //                    if (wpfApplication == null)
+        //                    {
+        //                        wpfApplication = new System.Windows.Application();
+        //                        wpfApplication.Run();
+        //                    }
+        //                    wpfApplication.Dispatcher.Invoke(action);
+        //                });
+        //            }
+        //        }
+        //    }
+        //}
 
-        public void Apply(string prediction)
-        {
-            DispatchToUI(() =>
-            {
+        //public void Apply(string prediction)
+        //{
+        //    DispatchToUI(() =>
+        //    {
 
-                string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord(); // GetPreviousWord();//
+        //        string previousInput = TextProvidersManager.CurrentProvider.GetPreviousWord();
 
-            System.Diagnostics.Debug.WriteLine("Apply [_currentInput : '{0}', _previousInput : '{1}', prediction : '{2}']", _currentInput, previousInput, prediction);
+        //    System.Diagnostics.Debug.WriteLine("Apply [_currentInput : '{0}', _previousInput : '{1}', prediction : '{2}']", _currentInput, previousInput, prediction);
 
-                var lm = Globals.ThisAddIn.LanguagesManager;
+        //        var lm = Globals.ThisAddIn.LanguagesManager;
 
-                var language = lm.CurrentLanguage; //LanguagesManager.Languages[Configuration.Language - 1];
+        //        var language = lm.CurrentLanguage; //LanguagesManager.Languages[Configuration.Language - 1];
 
-                // Update pair.
-                if (!string.IsNullOrWhiteSpace(previousInput))
-                    PredictionsService.UpdatePair(language, previousInput, prediction);
+        //        // Update pair.
+        //        if (!string.IsNullOrWhiteSpace(previousInput))
+        //            PredictionsService.UpdatePair(language, previousInput, prediction);
 
-                // Increment word's balancy if exists.
-                var word = language.Words.Find(w => w.Text == prediction);
-                if (word != null)
-                {
-                    word.Occurrence++;
-                    word.IsUpdated = true;
-                    language.Update(word);
-                }
+        //        // Increment word's balancy if exists.
+        //        var word = language.Words.Find(w => w.Text == prediction);
+        //        if (word != null)
+        //        {
+        //            word.Occurrence++;
+        //            word.IsUpdated = true;
+        //            language.Update(word);
+        //        }
 
-                TextProvidersManager.Apply(_currentInput, prediction);
+        //        TextProvidersManager.Apply(_currentInput, prediction);
 
-            });
-        }
+        //    });
+        //}
 
         private string GetPreviousWord()
         {
@@ -244,7 +262,7 @@ namespace PhonoWriterWord
             {
                 GetSuggestions(currentWord);
                 //Apply(currentWord); // need to apply A PREDICTOR !!! NOT A WORD
-                System.Diagnostics.Debug.WriteLine($"Current word: {currentWord}");
+                System.Diagnostics.Debug.WriteLine("Current word: " +currentWord);
                 System.Diagnostics.Debug.WriteLine("Suggestions:");
 
                 //foreach (string suggestion in )
@@ -289,12 +307,12 @@ namespace PhonoWriterWord
             System.Diagnostics.Debug.WriteLine("From GetSuggestions - ThisAddin.cs line 287 - INPUT = "+input);
 
             System.Windows.Controls.ListView lw = (System.Windows.Controls.ListView)wpf.FindName("myList");
-        lw.Items.Clear();
+            lw.Items.Clear();
 
             System.Windows.Controls.ContentControl pb = (System.Windows.Controls.ContentControl)wpf.FindName("PictureBox");
 
-        System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
-        label.Content = input;
+            System.Windows.Controls.Label label = (System.Windows.Controls.Label)wpf.FindName("mySelection");
+            label.Content = input;
             ((System.Windows.Controls.Image) wpf.FindName("pictureBox")).Source = null;
             PredictionsManager.Request(input);
 
@@ -318,7 +336,7 @@ namespace PhonoWriterWord
             //    lw.SelectedIndex = 0;
             //}
 
-            Thread.Sleep(100);
+            //Thread.Sleep(100);
 
             System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - End of GetSuggestion(string input) - Start of displaying predictions - size : " +_predictions.Count());
 
@@ -357,13 +375,7 @@ namespace PhonoWriterWord
             PredictionsManager.Initialize();
             TextProvidersManager.Initialize();
 
-            // Register events.
-            //Configuration.ConfigurationChanged += Configuration_Changed;
-            PredictionsManager.PredictionsFound += PredictionsManager_PredictionsFound;
-            //PredictionsManager.PredictionSelected += PredictionsManager_PredictionSelected;
-            TextProvidersManager.PunctuationFound += TextProvidersManager_PunctuationFound;
-            TextProvidersManager.SeparatorFound += TextProvidersManager_SeparatorFound;
-            TextProvidersManager.TextFound += TextProvidersManager_TextFound;
+
 
         }
 
@@ -415,21 +427,21 @@ namespace PhonoWriterWord
 
         private void RegisterTextProviders()
         {
-            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 384 - RegisterTextProviders()");
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 428 - RegisterTextProviders()");
             TextProvidersManager.RegisterProvider(WordTextProvider);
             //TextProvidersManager.RegisterProvider((ITextProvider)SpyService);
-            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 387 - TextProviders = " +this.WordTextProvider);
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 431 - TextProviders = " +this.WordTextProvider);
         }
 
         private void PredictionsManager_PredictionsFound(object sender, PredictionsFoundArgs e)
         {
             _predictionSelected = false;
 
-            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 426 - PredictionsFound ! e.Input = " +e.Input.ToString() + " _currentInput = " +_currentInput);
+            System.Diagnostics.Debug.WriteLine("THIS ADDIN.cs - line 438 - PredictionsFound ! e.Input = " +e.Input.ToString() + " _currentInput = " +_currentInput);
 
             // TEST ==========
-            //if (e.Input != _currentInput)
-            //    return;
+            if (e.Input != _currentInput)
+                return;
 
 
             //
@@ -437,7 +449,8 @@ namespace PhonoWriterWord
             //
 
             // Filter predictions.
-            _predictions = PredictionsManager.Filter(e.Predictions, _currentInput); //e.Input
+            System.Diagnostics.Debug.WriteLine("Trying to fill out _predictions - from ThisAddIn.cs - PredictionsManager_PredictionsFound");
+            _predictions = PredictionsManager.Filter(e.Predictions, e.Input); //_currentInput
 
             // Code below commented until Configuration.PictographicHidePictureless is created
             //// Hide pictureless words if necessary.
@@ -496,17 +509,20 @@ namespace PhonoWriterWord
 
             // Sort and regroup.
             _predictions = _predictions.GroupBy(s => s).OrderByDescending(g => g.Count()).Select(g => g.Key).Take(max).ToList();
-
+            foreach (var p in _predictions)
+            {
+                System.Diagnostics.Debug.WriteLine("ThisAddIn.cs - Predictions AFTER SORTING, PredictionsManager_PredictionsFound : " + p);
+            }
             //
             // Show predictions
             //
 
         }
 
-        private void PredictionsManager_PredictionSelected(object sender, string prediction)
-        {
-            Apply(prediction);
-        }
+        //private void PredictionsManager_PredictionSelected(object sender, string prediction)
+        //{
+        //    Apply(prediction);
+        //}
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
@@ -560,7 +576,7 @@ namespace PhonoWriterWord
 
         private void TextProvidersManager_TextFound(object sender, TextFoundArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("TextProvidersManager_TextFound [text : '{0}', fetch : {1}]", e.Text, e.FetchType);
+            System.Diagnostics.Debug.WriteLine("ThisAddIns.cs - TextProvidersManager_TextFound [text : '{0}', fetch : {1}]", e.Text, e.FetchType);
 
             // Read found text.
             //!!!!!!!!!!!!!!CHANGE CONDITION

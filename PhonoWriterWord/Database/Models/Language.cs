@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PhonoWriterWord.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,20 @@ namespace PhonoWriterWord.Database.Models
                 {"it", "Italiano"},
                 {"es", "Español"}
             };
+        }
+
+        public LanguagesEnum getLanguageEnum(Language l)
+        {
+            if (l.id == 1)
+                return LanguagesEnum.Francais;
+            if (l.id == 2)
+                return LanguagesEnum.English;
+            if (l.id == 3)
+                return LanguagesEnum.Deutsch;
+            if (l.id == 4)
+                return LanguagesEnum.Italiano;
+            else
+                return LanguagesEnum.Spanish;
         }
 
         public Language(int id, string iso) : this()
