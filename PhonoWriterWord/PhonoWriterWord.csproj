@@ -298,6 +298,7 @@
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_17_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_18_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_25_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_4_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_5_TemporaryKey.pfx" />
@@ -349,12 +350,12 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_5_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_25_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>78980E943B7E0037E7A3281CA60B2A7FAD305535</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>500AA1DBE514EC6DFB333047CF7D0111B5779EDF</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

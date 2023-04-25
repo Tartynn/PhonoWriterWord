@@ -220,26 +220,28 @@ namespace PhonoWriterWord
                 config.PredictionClassicChars = value;
             }
 
-            private void SliderPhonetic_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
-            {
-                var slider = (Slider)sender;
-                int value = (int)slider.Value;
-                config.PredictionPhoneticAmount = value;
-            }
+            // Below can be removed
 
-            private void SliderPhoneticChar_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
-            {
-                var slider = (Slider)sender;
-                int value = (int)slider.Value;
-                config.PredictionPhoneticChars = value;
-            }
+            //private void SliderPhonetic_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+            //{
+            //    var slider = (Slider)sender;
+            //    int value = (int)slider.Value;
+            //    config.PredictionPhoneticAmount = value;
+            //}
 
-            private void SliderPhoneticUntil_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
-            {
-                var slider = (Slider)sender;
-                int value = (int)slider.Value;
-                config.PredictionPhoneticUntil = value;
-            }
+            //private void SliderPhoneticChar_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+            //{
+            //    var slider = (Slider)sender;
+            //    int value = (int)slider.Value;
+            //    config.PredictionPhoneticChars = value;
+            //}
+
+            //private void SliderPhoneticUntil_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+            //{
+            //    var slider = (Slider)sender;
+            //    int value = (int)slider.Value;
+            //    config.PredictionPhoneticUntil = value;
+            //}
 
             private void Button4_Click(object sender, System.Windows.RoutedEventArgs e)
             {
