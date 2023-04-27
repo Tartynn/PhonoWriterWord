@@ -1,14 +1,8 @@
-﻿using PhonoWriterWord.Database;
-using PhonoWriterWord.Database.Models;
-using PhonoWriterWord.Enumerations;
+﻿using PhonoWriterWord.Enumerations;
 using PhonoWriterWord.Services.Log;
+using PhonoWriterWord.Sources.Classes;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Office.Interop.Word;
 using Language = PhonoWriterWord.Database.Models.Language;
 
 namespace PhonoWriterWord.Managers

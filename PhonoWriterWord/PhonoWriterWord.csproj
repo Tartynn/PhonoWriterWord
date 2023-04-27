@@ -28,15 +28,38 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>PhonoWriterWord</RootNamespace>
     <AssemblyName>PhonoWriterWord</AssemblyName>
-    <LoadBehavior>3</LoadBehavior>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <PublishUrl>publish\</PublishUrl>
+    <InstallUrl />
+    <TargetCulture>en</TargetCulture>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <ProductName>PhonoWriterWord</ProductName>
+    <PublisherName />
+    <SupportUrl />
+    <FriendlyName>PhonoWriterWord</FriendlyName>
+    <OfficeApplicationDescription />
+    <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
@@ -119,6 +142,7 @@
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.117.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
@@ -142,6 +166,7 @@
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -227,8 +252,10 @@
     <Compile Include="Exceptions\NoConnectionAvailableException.cs" />
     <Compile Include="Exceptions\WordNotFoundException.cs" />
     <Compile Include="Managers\LanguagesManager.cs" />
+    <Compile Include="Managers\PredictionsConfigManager.cs" />
     <Compile Include="Managers\PredictionsManager.cs" />
     <Compile Include="Managers\TextProvidersManager.cs" />
+    <Compile Include="Managers\TtsManager.cs" />
     <Compile Include="Predictions\Predictors\Prediction.cs" />
     <Compile Include="Predictions\Predictors\PredictionAlternative.cs" />
     <Compile Include="Predictions\Predictors\PredictionClassic.cs" />
@@ -245,11 +272,13 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sources\Classes\PredictionConfig.cs" />
     <Compile Include="Sources\Classes\Configuration.cs" />
     <Compile Include="Sources\Classes\TextProvider.cs" />
     <Compile Include="Sources\Predictions\PredictionRequest.cs" />
     <Compile Include="Services\UpdateService\DesktopUpdateService.cs" />
     <Compile Include="Utils\DistanceUtil.cs" />
+    <Compile Include="Utils\LanguageUtils.cs" />
     <Compile Include="Values\Constants.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -268,8 +297,11 @@
     <None Include="Database\Files\dictionary.db" />
     <None Include="packages.config" />
     <None Include="PhonoWriterWord_17_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_18_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_25_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_2_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_4_TemporaryKey.pfx" />
+    <None Include="PhonoWriterWord_5_TemporaryKey.pfx" />
     <None Include="PhonoWriterWord_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -318,12 +350,12 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>PhonoWriterWord_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PhonoWriterWord_25_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>5FB9AD8B9B356D5AD2731E0A436744355DD73D0F</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>500AA1DBE514EC6DFB333047CF7D0111B5779EDF</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

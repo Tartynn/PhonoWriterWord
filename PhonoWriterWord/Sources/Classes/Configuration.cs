@@ -85,7 +85,7 @@ namespace PhonoWriterWord.Sources.Classes
 		/// <summary>
 		/// Constructor, used to set default values to every property
 		/// </summary>
-		private Configuration()
+		public Configuration()
 		{
 			Version = "0";
 
@@ -94,7 +94,8 @@ namespace PhonoWriterWord.Sources.Classes
 
 			// Interface Lang & DB Lang (using system's language)
 			//InterfaceLanguage = LanguageUtils.ConvertLanguageToInt(CultureInfo.InstalledUICulture.TwoLetterISOLanguageName);
-			//Language = InterfaceLanguage;
+			Language = InterfaceLanguage;
+
 
 			// Engines
 			EngineName = string.Empty;
